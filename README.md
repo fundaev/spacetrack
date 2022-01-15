@@ -9,7 +9,7 @@ The `Client` class is "entry point" of this package. It allows to request the da
  [www.space-track.org](https://www.space-track.org).  
 
 To perform the HTTP-requests the `Client` uses [AsyncHTTPClient](https://github.com/swift-server/async-http-client.git)
-package, based on [swift-nio]https://github.com/apple/swift-nio) package. Thus to create an instance of the `Client`
+package, based on [swift-nio](https://github.com/apple/swift-nio) package. Thus to create an instance of the `Client`
 type it is necessary to create event loop group first:
 
 ```
