@@ -167,6 +167,21 @@ public extension EntityField {
         return PredicateItem<Self>(lhs: lhs, rhs: .less(String(value))).toPredicate()
     }
 
+    /// Create `Predicate` meaning: the field is less than the value
+    ///
+    /// For example:
+    /// ```swift
+    /// let filter = Satellite.Key.launch < Date()
+    /// ```
+    ///
+    /// - parameters:
+    ///     - lhs: Some EntityField
+    ///     - rhs: Some value
+    /// - returns: Non-empty predicate
+    static func < (lhs: Self, value: Date) -> Predicate<Self> {
+        return PredicateItem<Self>(lhs: lhs, rhs: .less(value.toString())).toPredicate()
+    }
+
     /// Create `Predicate` meaning: the field is greater than the value
     ///
     /// For example:
@@ -195,6 +210,21 @@ public extension EntityField {
     /// - returns: Non-empty predicate
     static func > <T: LosslessStringConvertible>(lhs: Self, value: T) -> Predicate<Self> {
         return PredicateItem<Self>(lhs: lhs, rhs: .greater(String(value))).toPredicate()
+    }
+
+    /// Create `Predicate` meaning: the field is greater than the value
+    ///
+    /// For example:
+    /// ```swift
+    /// let filter = Satellite.Key.launch > Date(timeIntervalSince1970: 0)
+    /// ```
+    ///
+    /// - parameters:
+    ///     - lhs: Some EntityField
+    ///     - rhs: Some string value
+    /// - returns: Non-empty predicate
+    static func > (lhs: Self, value: Date) -> Predicate<Self> {
+        return PredicateItem<Self>(lhs: lhs, rhs: .greater(value.toString())).toPredicate()
     }
 
     /// Create `Predicate` meaning: the field is equal to the value.
@@ -243,6 +273,21 @@ public extension EntityField {
         return PredicateItem<Self>(lhs: lhs, rhs: .equal(value ? "Y" : "N")).toPredicate()
     }
 
+    /// Create `Predicate` meaning: the field is equal to the value
+    ///
+    /// For example:
+    /// ```swift
+    /// let filter = Satellite.Key.launch == Date(timeIntervalSince1970: 0)
+    /// ```
+    ///
+    /// - parameters:
+    ///     - lhs: Some EntityField
+    ///     - rhs: Some string value
+    /// - returns: Non-empty predicate
+    static func == (lhs: Self, value: Date) -> Predicate<Self> {
+        return PredicateItem<Self>(lhs: lhs, rhs: .equal(value.toString())).toPredicate()
+    }
+
     /// Create `Predicate` meaning: the field is not equal to the value.
     ///
     /// For example:
@@ -288,6 +333,21 @@ public extension EntityField {
         return PredicateItem<Self>(lhs: lhs, rhs: .notEqual(value ? "Y" : "N")).toPredicate()
     }
 
+    /// Create `Predicate` meaning: the field is equal to the value
+    ///
+    /// For example:
+    /// ```swift
+    /// let filter = Satellite.Key.launch != Date(timeIntervalSince1970: 0)
+    /// ```
+    ///
+    /// - parameters:
+    ///     - lhs: Some EntityField
+    ///     - rhs: Some string value
+    /// - returns: Non-empty predicate
+    static func != (lhs: Self, value: Date) -> Predicate<Self> {
+        return PredicateItem<Self>(lhs: lhs, rhs: .notEqual(value.toString())).toPredicate()
+    }
+
     /// Create `Predicate` meaning: the field is equal to one of these values.
     ///
     /// For example:
@@ -318,7 +378,22 @@ public extension EntityField {
         }
         return PredicateItem<Self>(lhs: self, rhs: .oneOf(data)).toPredicate()
     }
-    
+
+    /// Create `Predicate` meaning: the field is equal to one of these values.
+    ///
+    /// For example:
+    /// ```swift
+    /// let filter = Satellite.Key.launch.oneOf([Date(), Date(timeIntervalSince1970: 0), nil])
+    /// ```
+    ///
+    /// - parameters:
+    ///     - values: The array of values
+    /// - returns: Non-empty predicate
+    func oneOf(values: [Date?]) -> Predicate<Self> {
+        let stringValues = values.map { $0?.toString() }
+        return PredicateItem<Self>(lhs: self, rhs: .oneOf(stringValues)).toPredicate()
+    }
+
     /// Create `Predicate` meaning: the field is between these values.
     ///
     /// For example:
@@ -347,5 +422,26 @@ public extension EntityField {
     /// - returns: Non-empty predicate
     func between<T: LosslessStringConvertible>(from: T, to: T) -> Predicate<Self> {
         return PredicateItem<Self>(lhs: self, rhs: .between(String(from), String(to))).toPredicate()
+    }
+
+    /// Create `Predicate` meaning: the field is between these values.
+    ///
+    /// For example:
+    /// ```swift
+    /// let filter = Satellite.Key.launch.between(from: Date(timeIntervalSince1970: 0), to: Date())
+    /// ```
+    ///
+    /// - parameters:
+    ///     - from: Left border of values
+    ///     - to: Right border of values
+    /// - returns: Non-empty predicate
+    func between(from: Date, to: Date) -> Predicate<Self> {
+        return PredicateItem<Self>(lhs: self, rhs: .between(from.toString(), to.toString())).toPredicate()
+    }
+}
+
+fileprivate extension Date {
+    func toString() -> String {
+        return makeDateFormatter().string(from: self)
     }
 }

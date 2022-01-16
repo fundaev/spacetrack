@@ -79,12 +79,16 @@ func decode<T, Key>(container: KeyedDecodingContainer<Key>,
     return value!
 }
 
+func makeDateFormatter() -> DateFormatter {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd"
+    return dateFormatter
+}
+
 fileprivate func parse<T: Decodable>(from data: Data) throws -> T {
     let decoder = JSONDecoder()
 
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd"
-    decoder.dateDecodingStrategy = .formatted(dateFormatter)
+    decoder.dateDecodingStrategy = .formatted(makeDateFormatter())
     
     return try decoder.decode(T.self, from: data)
 }

@@ -48,12 +48,14 @@ final class PredicateTests: XCTestCase {
         XCTAssertEqual("/IDENTITY/%3C-57", (Field.id < -57).query)
         XCTAssertEqual("/IDENTITY/%3C12.456", (Field.id < 12.456).query)
         XCTAssertEqual("/IDENTITY/%3C-0.123", (Field.id < -0.123).query)
+        XCTAssertEqual("/IDENTITY/%3C1970-01-01", (Field.id < Date(timeIntervalSince1970: 0)).query)
 
         XCTAssertEqual("/NAME/%3E2", (Field.name > "2").query)
         XCTAssertEqual("/NAME/%3E732", (Field.name > 732).query)
         XCTAssertEqual("/NAME/%3E-159", (Field.name > -159).query)
         XCTAssertEqual("/NAME/%3E7.32", (Field.name > 7.32).query)
         XCTAssertEqual("/NAME/%3E-0.593", (Field.name > -0.593).query)
+        XCTAssertEqual("/NAME/%3E1970-01-01", (Field.name > Date(timeIntervalSince1970: 0)).query)
 
         XCTAssertEqual("/VAL/test", (Field.value == "test").query)
         XCTAssertEqual("/VAL/null-val", (Field.value == nil).query)
@@ -63,6 +65,7 @@ final class PredicateTests: XCTestCase {
         XCTAssertEqual("/VAL/-89.987", (Field.value == -89.987).query)
         XCTAssertEqual("/VAL/Y", (Field.value == true).query)
         XCTAssertEqual("/VAL/N", (Field.value == false).query)
+        XCTAssertEqual("/VAL/1970-01-01", (Field.value == Date(timeIntervalSince1970: 0)).query)
 
         XCTAssertEqual("/IDENTITY/%3C%3Etest", (Field.id != "test").query)
         XCTAssertEqual("/IDENTITY/%3C%3Enull-val", (Field.id != nil).query)
@@ -72,14 +75,20 @@ final class PredicateTests: XCTestCase {
         XCTAssertEqual("/VAL/%3C%3E-89.987", (Field.value != -89.987).query)
         XCTAssertEqual("/VAL/%3C%3EY", (Field.value != true).query)
         XCTAssertEqual("/VAL/%3C%3EN", (Field.value != false).query)
+        XCTAssertEqual("/VAL/%3C%3E1970-01-01", (Field.value != Date(timeIntervalSince1970: 0)).query)
 
         XCTAssertEqual("/NAME/a,null-val,c", (Field.name.oneOf(values: ["a", nil, "c"])).query)
         XCTAssertEqual("/NAME/12,-456,3129", (Field.name.oneOf(values: [12, -456, 3129])).query)
         XCTAssertEqual("/NAME/-0.0012,1.236,-1.5", (Field.name.oneOf(values: [-0.0012, 1.236, -1.5])).query)
+        XCTAssertEqual("/NAME/1970-01-01,1970-01-02,null-val", (Field.name.oneOf(values: [
+            Date(timeIntervalSince1970: 0), Date(timeIntervalSince1970: 86400), nil
+        ])).query)
 
         XCTAssertEqual("/NAME/min--max", (Field.name.between(from: "min", to: "max")).query)
         XCTAssertEqual("/NAME/-12--45", (Field.name.between(from: -12, to: 45)).query)
         XCTAssertEqual("/NAME/-12.456--45.79", (Field.name.between(from: -12.456, to: 45.79)).query)
+        XCTAssertEqual("/NAME/1970-01-01--1970-01-02", (Field.name.between(
+            from: Date(timeIntervalSince1970: 0), to: Date(timeIntervalSince1970: 86400))).query)
     }
     
     func testPredicateSpecialSymbols() {
