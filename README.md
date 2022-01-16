@@ -55,8 +55,6 @@ let satFuture = client.requestSatelliteList(where: Satellite.Key.name == "~~NOAA
                                             order: Satellite.Key.name.asc(), limit: 10)
 do {
     let result = try satFuture.wait()
-    print("OBJECT ID       NAME")
-    print("-------------------------------")
     for sat in result.data {
         print("\(sat.name)")
     }
