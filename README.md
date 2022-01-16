@@ -1,3 +1,4 @@
+[![Swift](https://github.com/fundaev/spacetrack/actions/workflows/swift.yml/badge.svg)](https://github.com/fundaev/spacetrack/actions/workflows/swift.yml)
 # SpaceTrack
 
 The SpaceTrack package provides a convenient way for interaction with [www.space-track.org](https://www.space-track.org)
