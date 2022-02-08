@@ -30,6 +30,34 @@ public enum Result: Equatable, Error {
     case RequestError(String)
 }
 
+/// Date format
+public enum DateFormat {
+    /// Date only
+    case Date
+    /// Date and time
+    case DateTime
+    /// Date and time with microseconds
+    case DatePreciseTime
+    
+    func hasTime() -> Bool {
+        switch self {
+        case .Date:
+            return false
+        case .DateTime, .DatePreciseTime:
+            return true
+        }
+    }
+
+    func hasMicrosecond() -> Bool {
+        switch self {
+        case .Date, .DateTime:
+            return false
+        case .DatePreciseTime:
+            return true
+        }
+    }
+}
+
 /// Represents a field of an entity
 /// received from [www.space-track.org](https://www.space-track.org)
 ///
@@ -37,6 +65,8 @@ public enum Result: Equatable, Error {
 /// allowing to create the instances of `Predicate` and `OrderBy` types.
 public protocol EntityField {
     var rawValue: String { get }
+    
+    var dateFormat: DateFormat { get }
 }
 
 protocol QueryBuilder {

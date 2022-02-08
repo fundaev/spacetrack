@@ -76,6 +76,8 @@ public struct Satellite: Decodable {
         case objectId     = "OBJECT_ID"
         case objectName   = "OBJECT_NAME"
         case objectNumber = "OBJECT_NUMBER"
+        
+        public var dateFormat: DateFormat { .Date }
     }
     
     public init(from decoder: Decoder) throws {
@@ -86,10 +88,10 @@ public struct Satellite: Decodable {
         objectType = try c.decodeIfPresent(String.self, forKey: .objectType)
         name = try c.decode(String.self, forKey: .name)
         country = try c.decode(String.self, forKey: .country)
-        launch = try c.decodeIfPresent(Date.self, forKey: .launch)
+        launch = try decodeOptional(container: c, forKey: .launch)
         site = try c.decodeIfPresent(String.self, forKey: .site)
 
-        decay = try c.decodeIfPresent(Date.self, forKey: .decay)
+        decay = try decodeOptional(container: c, forKey: .decay)
         period = try decodeOptional(container: c, forKey: .period)
         inclination = try decodeOptional(container: c, forKey: .inclination)
         apogee = try decodeOptional(container: c, forKey: .apogee)
@@ -118,37 +120,9 @@ public typealias SatellitePredicate = Predicate<Satellite.Key>
 /// Type-alias for `Order<Satellite.Key>`
 public typealias SatelliteOrder = Order<Satellite.Key>
 
-struct SatelliteMetadata: Decodable {
-    var dataSize: String = ""
-    var limit: Int = 0
-    var offset: Int = 0
-    var requestTime: String = ""
-    var returnedRows: Int = 0
-    var total: Int = 0
-    
-    private enum CodingKeys: String, CodingKey {
-        case dataSize     = "DataSize"
-        case limit        = "Limit"
-        case offset       = "LimitOffset"
-        case requestTime  = "RequestTime"
-        case returnedRows = "ReturnedRows"
-        case total        = "Total"
-    }
-}
-
-struct SatelliteResponse: Decodable {
-    var metadata: SatelliteMetadata
-    var data: [Satellite]
-    
-    private enum CodingKeys: String, CodingKey {
-        case metadata = "request_metadata"
-        case data     = "data"
-    }
-}
-
 /// Satellite catalog information
 public struct SatelliteList: Convertable, OptionalResponse {
-    typealias SourceType = SatelliteResponse
+    typealias SourceType = ResponseWithMetadata<Satellite>
     
     /// Total count of satellites satisfied to the filter,
     /// specified in the Client.requestSatelliteList method
@@ -160,7 +134,7 @@ public struct SatelliteList: Convertable, OptionalResponse {
 
     static let emptyResult = "[]"
 
-    init(from: SatelliteResponse) {
+    init(from: SourceType) {
         count = from.metadata.total
         data = from.data
     }
@@ -173,7 +147,7 @@ public struct SatelliteList: Convertable, OptionalResponse {
 
 class SatelliteDecoder: ResponseConverter {
     typealias Output = SatelliteList
-    typealias RawResponse = SatelliteResponse
+    typealias RawResponse = SatelliteList.SourceType
 
     static let controller = Controller.basicSpaceData
     static let action = Action.query

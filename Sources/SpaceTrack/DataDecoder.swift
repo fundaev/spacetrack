@@ -55,7 +55,7 @@ extension Bool: ConvertableFromString {
 }
 
 func decodeOptional<T, Key>(container: KeyedDecodingContainer<Key>,
-                       forKey key: Key) throws -> T? where T: ConvertableFromString {
+                            forKey key: Key) throws -> T? where T: ConvertableFromString {
     let stringValue = try container.decodeIfPresent(String.self, forKey: key)
     if stringValue == nil {
         return nil
@@ -70,7 +70,7 @@ func decodeOptional<T, Key>(container: KeyedDecodingContainer<Key>,
 }
 
 func decode<T, Key>(container: KeyedDecodingContainer<Key>,
-               forKey key: Key) throws -> T where T: ConvertableFromString {
+                    forKey key: Key) throws -> T where T: ConvertableFromString {
     let stringValue = try container.decode(String.self, forKey: key)
     let value = T(stringValue)
     if value == nil {
@@ -79,17 +79,8 @@ func decode<T, Key>(container: KeyedDecodingContainer<Key>,
     return value!
 }
 
-func makeDateFormatter() -> DateFormatter {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd"
-    return dateFormatter
-}
-
 fileprivate func parse<T: Decodable>(from data: Data) throws -> T {
     let decoder = JSONDecoder()
-
-    decoder.dateDecodingStrategy = .formatted(makeDateFormatter())
-    
     return try decoder.decode(T.self, from: data)
 }
 

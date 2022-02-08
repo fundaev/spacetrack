@@ -28,6 +28,10 @@ final class OrderTests: XCTestCase {
         case id    = "IDENTITY"
         case name  = "NAME"
         case value = "VAL"
+        
+        var dateFormat: DateFormat {
+            .Date
+        }
     }
     
     typealias FieldOrder = OrderItem<Field>

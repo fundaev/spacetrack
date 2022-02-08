@@ -20,19 +20,30 @@
 
 import Foundation
 
-extension Date {
-    static func from(year: Int, month: Int, day: Int,
-                     hour: Int = 0, minute: Int = 0, second: Int = 0, nanosecond: Int = 0) -> Date? {
-        var components = DateComponents()
-        components.timeZone = TimeZone(secondsFromGMT: 0)!
-        components.year = year
-        components.month = month
-        components.day = day
-        components.hour = hour
-        components.minute = minute
-        components.second = second
-        components.nanosecond = nanosecond
-        
-        return Calendar(identifier: .gregorian).date(from: components)
+struct Metadata: Decodable {
+    var dataSize: String = ""
+    var limit: Int = 0
+    var offset: Int = 0
+    var requestTime: String = ""
+    var returnedRows: Int = 0
+    var total: Int = 0
+    
+    private enum CodingKeys: String, CodingKey {
+        case dataSize     = "DataSize"
+        case limit        = "Limit"
+        case offset       = "LimitOffset"
+        case requestTime  = "RequestTime"
+        case returnedRows = "ReturnedRows"
+        case total        = "Total"
+    }
+}
+
+struct ResponseWithMetadata<Entity: Decodable>: Decodable {
+    var metadata: Metadata
+    var data: [Entity]
+    
+    private enum CodingKeys: String, CodingKey {
+        case metadata = "request_metadata"
+        case data     = "data"
     }
 }

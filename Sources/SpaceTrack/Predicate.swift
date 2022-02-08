@@ -179,7 +179,7 @@ public extension EntityField {
     ///     - rhs: Some value
     /// - returns: Non-empty predicate
     static func < (lhs: Self, value: Date) -> Predicate<Self> {
-        return PredicateItem<Self>(lhs: lhs, rhs: .less(value.toString())).toPredicate()
+        return PredicateItem<Self>(lhs: lhs, rhs: .less(value.toString(format: lhs.dateFormat))).toPredicate()
     }
 
     /// Create `Predicate` meaning: the field is greater than the value
@@ -224,7 +224,7 @@ public extension EntityField {
     ///     - rhs: Some string value
     /// - returns: Non-empty predicate
     static func > (lhs: Self, value: Date) -> Predicate<Self> {
-        return PredicateItem<Self>(lhs: lhs, rhs: .greater(value.toString())).toPredicate()
+        return PredicateItem<Self>(lhs: lhs, rhs: .greater(value.toString(format: lhs.dateFormat))).toPredicate()
     }
 
     /// Create `Predicate` meaning: the field is equal to the value.
@@ -285,7 +285,7 @@ public extension EntityField {
     ///     - rhs: Some string value
     /// - returns: Non-empty predicate
     static func == (lhs: Self, value: Date) -> Predicate<Self> {
-        return PredicateItem<Self>(lhs: lhs, rhs: .equal(value.toString())).toPredicate()
+        return PredicateItem<Self>(lhs: lhs, rhs: .equal(value.toString(format: lhs.dateFormat))).toPredicate()
     }
 
     /// Create `Predicate` meaning: the field is not equal to the value.
@@ -345,7 +345,7 @@ public extension EntityField {
     ///     - rhs: Some string value
     /// - returns: Non-empty predicate
     static func != (lhs: Self, value: Date) -> Predicate<Self> {
-        return PredicateItem<Self>(lhs: lhs, rhs: .notEqual(value.toString())).toPredicate()
+        return PredicateItem<Self>(lhs: lhs, rhs: .notEqual(value.toString(format: lhs.dateFormat))).toPredicate()
     }
 
     /// Create `Predicate` meaning: the field is equal to one of these values.
@@ -390,7 +390,7 @@ public extension EntityField {
     ///     - values: The array of values
     /// - returns: Non-empty predicate
     func oneOf(values: [Date?]) -> Predicate<Self> {
-        let stringValues = values.map { $0?.toString() }
+        let stringValues = values.map { $0?.toString(format: self.dateFormat) }
         return PredicateItem<Self>(lhs: self, rhs: .oneOf(stringValues)).toPredicate()
     }
 
@@ -436,12 +436,49 @@ public extension EntityField {
     ///     - to: Right border of values
     /// - returns: Non-empty predicate
     func between(from: Date, to: Date) -> Predicate<Self> {
-        return PredicateItem<Self>(lhs: self, rhs: .between(from.toString(), to.toString())).toPredicate()
+        return PredicateItem<Self>(
+            lhs: self,
+            rhs: .between(from.toString(format: self.dateFormat), to.toString(format: self.dateFormat))
+        ).toPredicate()
+    }
+}
+
+fileprivate extension Int {
+    func toString(width: Int) -> String {
+        var text = "\(self)"
+        if text.count < width {
+            text = String(repeating: "0", count: width - text.count) + text
+        }
+        return text
     }
 }
 
 fileprivate extension Date {
-    func toString() -> String {
-        return makeDateFormatter().string(from: self)
+    func toString(format: DateFormat) -> String {
+        let c = Calendar.current.dateComponents(in: TimeZone(secondsFromGMT: 0)!, from: self)
+        let yearItems = [
+            c.year?.toString(width: 4) ?? "<none>",
+            c.month?.toString(width: 2) ?? "<none>",
+            c.day?.toString(width: 2) ?? "<none>"
+        ]
+        var text = yearItems.joined(separator: "-")
+        if !format.hasTime() {
+            return text
+        }
+        
+        let dayItems = [
+            c.hour?.toString(width: 2) ?? "<none>",
+            c.minute?.toString(width: 2) ?? "<none>",
+            c.second?.toString(width: 2) ?? "<none>"
+        ]
+        text += "T" + dayItems.joined(separator: ":")
+        if !format.hasMicrosecond() {
+            return text
+        }
+        
+        if let nanosecond = c.nanosecond {
+            text += "." + (nanosecond / 1000).toString(width: 6)
+        }
+        return text
     }
 }

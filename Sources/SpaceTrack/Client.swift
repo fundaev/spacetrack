@@ -123,6 +123,43 @@ public class Client {
         return requestData(handler: handler, filter: filter, order: order, limit: limit, offset: offset)
     }
 
+    /// Request current keplerian elements
+    ///
+    /// For example, this code requests first 10 satellites, starting from 4th, with names containing "ISS" word
+    /// and sorted by name:
+    /// ```swift
+    /// let futureData = client.requestGeneralPerturbations(
+    ///     where: GeneralPerturbations.Key.name == "~~ISS~~",
+    ///     order: Satellite.Key.name.asc(),
+    ///     limit: 10,
+    ///     offset: 3
+    /// )
+    /// ```
+    /// Another example. This code requests all satellites with "NOAA" word in their names, launched after 2000 year,
+    /// sorted ascending by names and descending by object ID:
+    /// ```swift
+    /// let futureData = client.requestSatelliteList(where: Satellite.Key.objectId == "1982-092AWB")
+    /// ```
+    ///
+    /// - parameters:
+    ///     - where: GPPredicate used to filter the data.
+    ///     - order: Use GeneralPerturbations.Key to construct the required order in the elements.
+    ///     - limit: Maximum count of items in the response
+    ///     - offset: List offset
+    /// - returns: EventLoopFuture instance with GeneralPerturbationsList.
+    ///            GeneralPerturbationsList.count field contains total number
+    ///            of the rows, satisfied to the specified filter.
+    ///            GeneralPerturbationsList.data is array of keplerian elements.
+    /// - seeAlso:
+    ///     - GeneralPerturbations
+    public func requestGeneralPerturbations(where filter: GPPredicate = GPPredicate(),
+                                            order: GPOrder = GPOrder(),
+                                            limit: Int? = nil,
+                                            offset: Int? = nil) -> EventLoopFuture<GeneralPerturbationsList> {
+        let handler = DataDelegate<GPDecoder>()
+        return requestData(handler: handler, filter: filter, order: order, limit: limit, offset: offset)
+    }
+
     private func requestData<Handler: DataHandler>(handler: Handler,
                                                    filter: QueryBuilder,
                                                    order: QueryBuilder,

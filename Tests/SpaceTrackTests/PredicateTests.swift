@@ -24,9 +24,23 @@ import class Foundation.Bundle
 
 final class PredicateTests: XCTestCase {
     enum Field: String, EntityField {
-        case id    = "IDENTITY"
-        case name  = "NAME"
-        case value = "VAL"
+        case id         = "IDENTITY"
+        case name       = "NAME"
+        case value      = "VAL"
+        case date       = "DATE"
+        case dateTime   = "DATETIME"
+        case dateTimeMs = "DATETIMEMS"
+
+        var dateFormat: DateFormat {
+            switch self {
+            case .dateTime:
+                return .DateTime
+            case .dateTimeMs:
+                return .DatePreciseTime
+            default:
+                return .Date
+            }
+        }
     }
 
     typealias FieldPredicate = PredicateItem<Field>
@@ -108,5 +122,12 @@ final class PredicateTests: XCTestCase {
         XCTAssertEqual("/IDENTITY/-20--53/NAME/%3C%3ETEST/VAL/-1.23,2.19,4.57",
                        (Field.id.between(from: -20, to: 53) && Field.name != "TEST" &&
                         Field.value.oneOf(values: [-1.23, 2.19, 4.57])).query)
+    }
+    
+    func testDateFormat() {
+        XCTAssertEqual("/DATE/1970-01-01", (Field.date == Date(timeIntervalSince1970: 0)).query)
+        XCTAssertEqual("/DATETIME/1970-01-01T00:00:00", (Field.dateTime == Date(timeIntervalSince1970: 0)).query)
+        XCTAssertEqual("/DATETIMEMS/1970-01-01T00:00:00.000000",
+                       (Field.dateTimeMs == Date(timeIntervalSince1970: 0)).query)
     }
 }
