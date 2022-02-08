@@ -104,8 +104,8 @@ public extension EntityField {
     /// ```swift
     /// let order = Satellite.Key.name.asc()
     /// ```
-    func asc() -> Order<Self> {
-        return OrderItem<Self>(for: self.self).toOrder()
+    var asc: Order<Self> {
+        OrderItem<Self>(for: self.self).toOrder()
     }
 
     /// Create `Order` structure to sort the data by EntityField descendingly
@@ -114,7 +114,7 @@ public extension EntityField {
     /// ```swift
     /// let order = Satellite.Key.name.desc()
     /// ```
-    func desc() -> Order<Self> {
-        return OrderItem<Self>(for: self.self, direction: .desc).toOrder()
+    var desc: Order<Self> {
+        OrderItem<Self>(for: self.self, direction: .desc).toOrder()
     }
 }

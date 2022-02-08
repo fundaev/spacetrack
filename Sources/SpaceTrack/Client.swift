@@ -92,7 +92,7 @@ public class Client {
     /// ```swift
     /// let futureData = client.requestSatelliteList(
     ///     where: Satellite.Key.name == "~~ISS~~",
-    ///     order: Satellite.Key.name.asc(),
+    ///     order: Satellite.Key.name.asc,
     ///     limit: 10,
     ///     offset: 3
     /// )
@@ -102,7 +102,7 @@ public class Client {
     /// ```swift
     /// let futureData = client.requestSatelliteList(
     ///     where: Satellite.Key.name == "~~NOAA~~" && Satellite.Key.launchYear > 2000,
-    ///     order: Satellite.Key.name.asc() & Satellite.Key.objectId.desc())
+    ///     order: Satellite.Key.name.asc & Satellite.Key.objectId.desc)
     /// ```
     ///
     /// - parameters:
@@ -130,7 +130,7 @@ public class Client {
     /// ```swift
     /// let futureData = client.requestGeneralPerturbations(
     ///     where: GeneralPerturbations.Key.name == "~~ISS~~",
-    ///     order: Satellite.Key.name.asc(),
+    ///     order: Satellite.Key.name.asc,
     ///     limit: 10,
     ///     offset: 3
     /// )

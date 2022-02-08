@@ -51,18 +51,18 @@ final class OrderTests: XCTestCase {
     }
     
     func testOrderByAsExtension() {
-        XCTAssertEqual("/orderby/NAME", Field.name.asc().query)
-        XCTAssertEqual("/orderby/NAME%20desc", Field.name.desc().query)
+        XCTAssertEqual("/orderby/NAME", Field.name.asc.query)
+        XCTAssertEqual("/orderby/NAME%20desc", Field.name.desc.query)
     }
 
     func testTwoOrderItems() {
-        XCTAssertEqual("/orderby/NAME,IDENTITY", (Field.name.asc() & Field.id.asc()).query)
-        XCTAssertEqual("/orderby/NAME%20desc,IDENTITY%20desc", (Field.name.desc() & Field.id.desc()).query)
+        XCTAssertEqual("/orderby/NAME,IDENTITY", (Field.name.asc & Field.id.asc).query)
+        XCTAssertEqual("/orderby/NAME%20desc,IDENTITY%20desc", (Field.name.desc & Field.id.desc).query)
     }
 
     func testMultipleOrderItems() {
-        XCTAssertEqual("/orderby/IDENTITY,NAME,VAL", (Field.id.asc() & Field.name.asc() & Field.value.asc()).query)
+        XCTAssertEqual("/orderby/IDENTITY,NAME,VAL", (Field.id.asc & Field.name.asc & Field.value.asc).query)
         XCTAssertEqual("/orderby/IDENTITY%20desc,NAME%20desc,VAL%20desc",
-                       (Field.id.desc() & Field.name.desc() & Field.value.desc()).query)
+                       (Field.id.desc & Field.name.desc & Field.value.desc).query)
     }
 }
