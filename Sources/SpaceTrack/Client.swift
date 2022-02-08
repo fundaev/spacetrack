@@ -125,20 +125,9 @@ public class Client {
 
     /// Request current keplerian elements
     ///
-    /// For example, this code requests first 10 satellites, starting from 4th, with names containing "ISS" word
-    /// and sorted by name:
+    /// For example, this code requests keplerian elements for satellite with object ID "1982-092AWB":
     /// ```swift
-    /// let futureData = client.requestGeneralPerturbations(
-    ///     where: GeneralPerturbations.Key.name == "~~ISS~~",
-    ///     order: Satellite.Key.name.asc,
-    ///     limit: 10,
-    ///     offset: 3
-    /// )
-    /// ```
-    /// Another example. This code requests all satellites with "NOAA" word in their names, launched after 2000 year,
-    /// sorted ascending by names and descending by object ID:
-    /// ```swift
-    /// let futureData = client.requestSatelliteList(where: Satellite.Key.objectId == "1982-092AWB")
+    /// let futureData = client.requestGeneralPerturbations(where: Satellite.Key.objectId == "1982-092AWB")
     /// ```
     ///
     /// - parameters:
