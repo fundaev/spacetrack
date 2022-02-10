@@ -90,7 +90,7 @@ public class Client {
     /// For example, this code requests first 10 satellites, starting from 4th, with names containing "ISS" word
     /// and sorted by name:
     /// ```swift
-    /// let futureData = client.requestSatelliteList(
+    /// let futureData = client.requestSatelliteCatalog(
     ///     where: Satellite.Key.name == "~~ISS~~",
     ///     order: Satellite.Key.name.asc,
     ///     limit: 10,
@@ -100,7 +100,7 @@ public class Client {
     /// Another example. This code requests all satellites with "NOAA" word in their names, launched after 2000 year,
     /// sorted ascending by names and descending by object ID:
     /// ```swift
-    /// let futureData = client.requestSatelliteList(
+    /// let futureData = client.requestSatelliteCatalog(
     ///     where: Satellite.Key.name == "~~NOAA~~" && Satellite.Key.launchYear > 2000,
     ///     order: Satellite.Key.name.asc & Satellite.Key.objectId.desc)
     /// ```
@@ -110,15 +110,15 @@ public class Client {
     ///     - order: Use Satellite.Key to construct the required order in the satellite list.
     ///     - limit: Maximum count of items in the response
     ///     - offset: List offset
-    /// - returns: EventLoopFuture instance with SatelliteList. SatelliteList.count field contains total number
+    /// - returns: EventLoopFuture instance with SatelliteCatalog. SatelliteCatalog.count field contains total number
     ///            of the satellites, satisfied to the specified filter.
-    ///            SatelliteList.data is array of selected satellites.
+    ///            SatelliteCatalog.data is array of selected satellites.
     /// - seeAlso:
-    ///     - SatelliteList
-    public func requestSatelliteList(where filter: SatellitePredicate = SatellitePredicate(),
-                                     order: SatelliteOrder = SatelliteOrder(),
-                                     limit: Int? = nil,
-                                     offset: Int? = nil) -> EventLoopFuture<SatelliteList> {
+    ///     - SatelliteCatalog
+    public func requestSatelliteCatalog(where filter: SatellitePredicate = SatellitePredicate(),
+                                        order: SatelliteOrder = SatelliteOrder(),
+                                        limit: Int? = nil,
+                                        offset: Int? = nil) -> EventLoopFuture<SatelliteCatalog> {
         let handler = DataDelegate<SatelliteDecoder>()
         return requestData(handler: handler, filter: filter, order: order, limit: limit, offset: offset)
     }
@@ -127,7 +127,7 @@ public class Client {
     ///
     /// For example, this code requests keplerian elements for satellite with object ID "1982-092AWB":
     /// ```swift
-    /// let futureData = client.requestGeneralPerturbations(where: Satellite.Key.objectId == "1982-092AWB")
+    /// let futureData = client.requestGeneralPerturbations(where: GeneralPerturbations.Key.objectId == "1982-092AWB")
     /// ```
     ///
     /// - parameters:

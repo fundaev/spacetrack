@@ -121,11 +121,11 @@ public typealias SatellitePredicate = Predicate<Satellite.Key>
 public typealias SatelliteOrder = Order<Satellite.Key>
 
 /// Satellite catalog information
-public struct SatelliteList: Convertable, OptionalResponse {
+public struct SatelliteCatalog: Convertable, OptionalResponse {
     typealias SourceType = ResponseWithMetadata<Satellite>
     
     /// Total count of satellites satisfied to the filter,
-    /// specified in the Client.requestSatelliteList method
+    /// specified in the Client.requestSatelliteCatalog method
     /// - seeAlso: Client
     public let count: Int
     
@@ -146,8 +146,8 @@ public struct SatelliteList: Convertable, OptionalResponse {
 }
 
 class SatelliteDecoder: ResponseConverter {
-    typealias Output = SatelliteList
-    typealias RawResponse = SatelliteList.SourceType
+    typealias Output = SatelliteCatalog
+    typealias RawResponse = SatelliteCatalog.SourceType
 
     static let controller = Controller.basicSpaceData
     static let action = Action.query

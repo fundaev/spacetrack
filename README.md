@@ -1,8 +1,28 @@
 [![Swift](https://github.com/fundaev/spacetrack/actions/workflows/swift.yml/badge.svg)](https://github.com/fundaev/spacetrack/actions/workflows/swift.yml)
 # SpaceTrack
 
-The SpaceTrack package provides a convenient way for interaction with [www.space-track.org](https://www.space-track.org)
+The SpaceTrack package allows to interact with [www.space-track.org](https://www.space-track.org)
 API.
+
+Currently the package supports satellite catalog and keplerian elements (general perturbations) requests only.
+
+## Adding dependencies
+
+Add this line into `dependencies` array in Package.swift file to use SpaceTrack package:
+
+```swift
+.package(url: "https://github.com/fundaev/spacetrack.git", from: "1.0.0"),
+``` 
+
+One should also add something like that:
+
+```swift
+.target(name: "MyProject", dependencies: [.product(name: "SpaceTrack", package: "spacetrack")]),
+``` 
+
+in your target specification.
+
+## Usage
 
 ### SpaceTrack.Client
 
@@ -33,6 +53,8 @@ let client = Client(eventLoopGroupProvider: .createNew)
 ...
 ```
 
+### Authentication
+
 Since the client is created it is necessary to authorize it to be able to receive the satellites data. For that one must
 have an account on [www.space-track.org](https://www.space-track.org).
 ```swift
@@ -49,15 +71,40 @@ do {
 }
 ``` 
 
-Now it is possible to request a required data. For example, let's request first 10 satellites with "NOAA" word in their
-names, launched after 2000 year and sorted by name:
+### Request satellite catalog
+
+Use `requestSatelliteCatalog` to get the available list of the satellites.
+
+For example, let's request first 10 satellites with "NOAA" word in their names,
+launched after 2000 year and sorted by name:
 ```swift
-let satFuture = client.requestSatelliteList(where: Satellite.Key.name == "~~NOAA~~" && Satellite.Key.launchYear > 2000,
-                                            order: Satellite.Key.name.asc(), limit: 10)
+let satFuture = client.requestSatelliteCatalog(
+    where: Satellite.Key.name == "~~NOAA~~" && Satellite.Key.launchYear > 2000,
+    order: Satellite.Key.name.asc,
+    limit: 10
+)
 do {
     let result = try satFuture.wait()
     for sat in result.data {
         print("\(sat.name)")
+    }
+    print("-------------------------------")
+    print("\(result.data.count) item(s) from \(result.count)")
+} catch {
+    print("Error: \(error)")
+}
+```
+
+### Request general perturbations (keplerian elements)
+
+To get the keplerian elements of the satellite one should use `requestGeneralPerturbations` method:
+
+```swift
+let gpFuture = client.requestGeneralPerturbations(where: GeneralPerturbations.Key.noradCatId == 25544)
+do {
+    let result = try gpFuture.wait()
+    for gp in result.data {
+        print("\(gp.semimajorAxis)")
     }
     print("-------------------------------")
     print("\(result.data.count) item(s) from \(result.count)")

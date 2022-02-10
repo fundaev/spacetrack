@@ -68,7 +68,7 @@ final class SatelliteTests: XCTestCase {
             }
         """
 
-        var response: SatelliteList
+        var response: SatelliteCatalog
         do {
             response = try SatelliteDecoder.decode(data: text.data(using: .utf8)!)
         } catch {
@@ -153,7 +153,7 @@ final class SatelliteTests: XCTestCase {
             }
         """
     
-        var response: SatelliteList
+        var response: SatelliteCatalog
         do {
             response = try SatelliteDecoder.decode(data: text.data(using: .utf8)!)
         } catch {
