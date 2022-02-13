@@ -23,7 +23,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "SpaceTrack",
+    name: "spacetrack",
     products: [
         .library(
             name: "SpaceTrack",
