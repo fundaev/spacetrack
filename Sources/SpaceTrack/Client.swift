@@ -119,8 +119,14 @@ public class Client {
                                         order: SatelliteOrder = SatelliteOrder(),
                                         limit: Int? = nil,
                                         offset: Int? = nil) -> EventLoopFuture<SatelliteCatalog> {
-        let handler = DataDelegate<SatelliteDecoder>()
-        return requestData(handler: handler, filter: filter, order: order, limit: limit, offset: offset)
+        return requestData(
+            request: SatelliteCatalogRequest(),
+            handler: DataDelegate(decoder: SatelliteDecoder()),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset
+        )
     }
 
     /// Request current keplerian elements
@@ -145,16 +151,23 @@ public class Client {
                                             order: GPOrder = GPOrder(),
                                             limit: Int? = nil,
                                             offset: Int? = nil) -> EventLoopFuture<GeneralPerturbationsList> {
-        let handler = DataDelegate<GPDecoder>()
-        return requestData(handler: handler, filter: filter, order: order, limit: limit, offset: offset)
+        return requestData(
+            request: GPRequest(),
+            handler: DataDelegate(decoder: GPDecoder()),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset
+        )
     }
 
-    private func requestData<Handler: DataHandler>(handler: Handler,
-                                                   filter: QueryBuilder,
-                                                   order: QueryBuilder,
-                                                   limit: Int?,
-                                                   offset: Int?) -> EventLoopFuture<Handler.Response> {
-        let uri = Handler.makeUri(filter: filter, order: order, limit: limit, offset: offset)
+    private func requestData<Handler: HTTPClientResponseDelegate>(request: RequestInfo,
+                                                                  handler: Handler,
+                                                                  filter: QueryBuilder,
+                                                                  order: QueryBuilder,
+                                                                  limit: Int?,
+                                                                  offset: Int?) -> EventLoopFuture<Handler.Response> {
+        let uri = request.uri(filter: filter, order: order, limit: limit, offset: offset)
         let request = createRequest(uri: uri, method: .GET)
         return httpClient.execute(request: request, delegate: handler, deadline: nil).futureResult
     }

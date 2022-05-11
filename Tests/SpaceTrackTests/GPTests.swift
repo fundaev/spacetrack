@@ -86,7 +86,10 @@ final class GPTests: XCTestCase {
 
         var response: GeneralPerturbationsList
         do {
-            response = try GPDecoder.decode(data: text.data(using: .utf8)!)
+            let buffer = ByteBuffer(string: text)
+            let decoder = GPDecoder()
+            decoder.processChunk(buffer: buffer)
+            response = try decoder.decode()
         } catch {
             XCTFail("Failed to decode: \(error)")
             return
@@ -203,7 +206,10 @@ final class GPTests: XCTestCase {
 
         var response: GeneralPerturbationsList
         do {
-            response = try GPDecoder.decode(data: text.data(using: .utf8)!)
+            let buffer = ByteBuffer(string: text)
+            let decoder = GPDecoder()
+            decoder.processChunk(buffer: buffer)
+            response = try decoder.decode()
         } catch {
             XCTFail("Failed to decode: \(error)")
             return

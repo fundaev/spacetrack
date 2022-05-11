@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 import Foundation
+import NIOCore
 
 /// Request result
 public enum Result: Equatable, Error {
@@ -97,25 +98,15 @@ enum Format: String {
 
 protocol ResponseDecoder {
     associatedtype Output
-
-    static var controller: Controller { get }
-    static var action: Action { get }
-    static var format: Format { get }
-    static var resource: String { get }
-    static var distinct: Bool { get }
-    static var metadata: Bool { get }
     
-    static func decode(data: Data) throws -> Output
+    func processChunk(buffer: ByteBuffer)
+    func decode() throws -> Output
 }
 
 protocol Convertable {
     associatedtype SourceType
     
     init(from data: SourceType)
-}
-
-protocol ResponseConverter: ResponseDecoder {
-    associatedtype RawResponse
 }
 
 protocol OptionalResponse {

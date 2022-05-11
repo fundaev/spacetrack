@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 import Foundation
+import NIOCore
 
 struct ParsingError: Error {
     let message: String
@@ -84,38 +85,49 @@ fileprivate func parse<T: Decodable>(from data: Data) throws -> T {
     return try decoder.decode(T.self, from: data)
 }
 
-extension ResponseDecoder where Output: Decodable {
-    static func decode(data: Data) throws -> Output {
+class JsonResponseDecoder<Entity> {
+    var data = Data()
+    
+    func processChunk(buffer: ByteBuffer) {
+        data.append(contentsOf: buffer.readableBytesView)
+    }
+}
+
+extension JsonResponseDecoder where Entity: Decodable {
+    func decode() throws -> Entity {
         return try parse(from: data)
     }
 }
 
-extension ResponseConverter where RawResponse: Decodable,
-                                  Output: Convertable,
-                                  Output.SourceType == RawResponse {
-    static func decode(data: Data) throws -> Output {
-        let response: RawResponse = try parse(from: data)
-        return Output(from: response)
-    }
-}
-
-extension ResponseDecoder where Output: Decodable & OptionalResponse {
-    static func decode(data: Data) throws -> Output {
-        if (String(data: data, encoding: .utf8) == Output.emptyResult) {
-            return Output()
+extension JsonResponseDecoder where Entity: Decodable & OptionalResponse {
+    func decode() throws -> Entity {
+        if (String(data: data, encoding: .utf8) == Entity.emptyResult) {
+            return Entity()
         }
         return try parse(from: data)
     }
 }
 
-extension ResponseConverter where RawResponse: Decodable,
-                                  Output: Convertable & OptionalResponse,
-                                  Output.SourceType == RawResponse {
-    static func decode(data: Data) throws -> Output {
-        if (String(data: data, encoding: .utf8) == Output.emptyResult) {
-            return Output()
+class JsonResponseConverter<InputEntity, OutputEntity>: JsonResponseDecoder<InputEntity> {
+}
+
+extension JsonResponseConverter where InputEntity: Decodable,
+                                      OutputEntity: Convertable,
+                                      OutputEntity.SourceType == InputEntity {
+    func decode() throws -> OutputEntity {
+        let response: InputEntity = try parse(from: data)
+        return OutputEntity(from: response)
+    }
+}
+
+extension JsonResponseConverter where InputEntity: Decodable,
+                                      OutputEntity: Convertable & OptionalResponse,
+                                      OutputEntity.SourceType == InputEntity {
+    func decode() throws -> OutputEntity {
+        if (String(data: data, encoding: .utf8) == OutputEntity.emptyResult) {
+            return OutputEntity()
         }
-        let response: RawResponse = try parse(from: data)
-        return Output(from: response)
+        let response: InputEntity = try parse(from: data)
+        return OutputEntity(from: response)
     }
 }

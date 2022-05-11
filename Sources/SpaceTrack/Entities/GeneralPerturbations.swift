@@ -194,14 +194,15 @@ public struct GeneralPerturbationsList: Convertable, OptionalResponse {
     }
 }
 
-class GPDecoder: ResponseConverter {
+class GPDecoder: JsonResponseConverter<GeneralPerturbationsList.SourceType, GeneralPerturbationsList>, ResponseDecoder {
     typealias Output = GeneralPerturbationsList
-    typealias RawResponse = GeneralPerturbationsList.SourceType
+}
 
-    static let controller = Controller.basicSpaceData
-    static let action = Action.query
-    static let format = Format.json
-    static let resource = "gp"
-    static let distinct = true
-    static let metadata = true
+class GPRequest: RequestInfo {
+    let controller = Controller.basicSpaceData
+    let action = Action.query
+    let format = Format.json
+    let resource = "gp"
+    let distinct = true
+    let metadata = true
 }

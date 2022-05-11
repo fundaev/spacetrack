@@ -145,14 +145,15 @@ public struct SatelliteCatalog: Convertable, OptionalResponse {
     }
 }
 
-class SatelliteDecoder: ResponseConverter {
+class SatelliteDecoder: JsonResponseConverter<SatelliteCatalog.SourceType, SatelliteCatalog>, ResponseDecoder {
     typealias Output = SatelliteCatalog
-    typealias RawResponse = SatelliteCatalog.SourceType
+}
 
-    static let controller = Controller.basicSpaceData
-    static let action = Action.query
-    static let format = Format.json
-    static let resource = "satcat"
-    static let distinct = true
-    static let metadata = true
+class SatelliteCatalogRequest: RequestInfo {
+    let controller = Controller.basicSpaceData
+    let action = Action.query
+    let format = Format.json
+    let resource = "satcat"
+    let distinct = true
+    let metadata = true
 }

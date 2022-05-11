@@ -19,37 +19,40 @@
 // SOFTWARE.
 
 import Foundation
-import NIOCore
-import NIOHTTP1
-import AsyncHTTPClient
 
-class DataDelegate<Decoder: ResponseDecoder>: HTTPClientResponseDelegate {
-    typealias Response = Decoder.Output
-
-    private var decoder: Decoder
-    private var error: Error?
+protocol RequestInfo {
+    var controller: Controller { get }
+    var action: Action { get }
+    var format: Format { get }
+    var resource: String { get }
+    var distinct: Bool { get }
+    var metadata: Bool { get }
     
-    init(decoder: Decoder) {
-        self.decoder = decoder
-    }
+    func uri(filter: QueryBuilder, order: QueryBuilder, limit: Int?, offset: Int?) -> String
+}
 
-    func didReceiveHead(task: HTTPClient.Task<Response>, _ head: HTTPResponseHead) -> EventLoopFuture<Void> {
-        if head.status != .ok {
-            return task.eventLoop.makeFailedFuture(Result.Unauthorized(""))
+extension RequestInfo {
+    func uri(filter: QueryBuilder, order: QueryBuilder, limit: Int?, offset: Int?) -> String {
+        var limitString = ""
+        if let limit = limit {
+            limitString = "/limit/\(limit)"
+            if let offset = offset {
+                limitString += ",\(offset)"
+            }
         }
-        return task.eventLoop.makeSucceededFuture(())
-    }
-    
-    func didReceiveBodyPart(task: HTTPClient.Task<Response>, _ buffer: ByteBuffer) -> EventLoopFuture<Void> {
-        decoder.processChunk(buffer: buffer)
-        return task.eventLoop.makeSucceededFuture(())
-    }
-    
-    func didReceiveError(task: HTTPClient.Task<Response>, _ error: Error) {
-        self.error = error
-    }
-    
-    func didFinishRequest(task: HTTPClient.Task<Response>) throws -> Response {
-        return try decoder.decode()
+        
+        var distinctString = ""
+        if distinct {
+            distinctString = "/distinct/true"
+        }
+        
+        var metadataString = ""
+        if metadata {
+            metadataString = "/metadata/true"
+        }
+        return """
+            /\(controller.rawValue)/\(action.rawValue)/class/\(resource)\(filter.query)\
+            \(order.query)\(limitString)/format/\(format.rawValue)\(distinctString)\(metadataString)
+            """
     }
 }

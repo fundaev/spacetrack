@@ -70,7 +70,10 @@ final class SatelliteTests: XCTestCase {
 
         var response: SatelliteCatalog
         do {
-            response = try SatelliteDecoder.decode(data: text.data(using: .utf8)!)
+            let buffer = ByteBuffer(string: text)
+            let decoder = SatelliteDecoder()
+            decoder.processChunk(buffer: buffer)
+            response = try decoder.decode()
         } catch {
             XCTFail("Failed to decode: \(error)")
             return
@@ -155,7 +158,10 @@ final class SatelliteTests: XCTestCase {
     
         var response: SatelliteCatalog
         do {
-            response = try SatelliteDecoder.decode(data: text.data(using: .utf8)!)
+            let buffer = ByteBuffer(string: text)
+            let decoder = SatelliteDecoder()
+            decoder.processChunk(buffer: buffer)
+            response = try decoder.decode()
         } catch {
             XCTFail("Failed to decode: \(error)")
             return

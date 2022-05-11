@@ -30,7 +30,7 @@ let package = Package(
             targets: ["SpaceTrack"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.8.1"),
+        .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.10.0"),
     ],
     targets: [
         .target(
