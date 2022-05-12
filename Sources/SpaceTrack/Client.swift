@@ -74,14 +74,12 @@ public class Client {
     ///     - password: user password
     /// - returns: Future with authorization result
     public func authorize(username: String, password: String) -> EventLoopFuture<Result> {
-        var request = createRequest(uri: "/ajaxauth/login", method: .POST)
-        request.headers.add(name: "Content-Type", value: "application/x-www-form-urlencoded")
-        request.body = formData(params: [
-            "identity": username,
-            "password": password
-        ])
+        var request = createRequest(uri: AuthDecoder.uri, method: AuthDecoder.method)
+        request.headers = AuthDecoder.requestHeaders
+        request.body = .byteBuffer(AuthDecoder.requestBody(username: username, password: password))
 
-        let task = httpClient.execute(request: request, delegate: AuthDelegate(session: self.session), deadline: nil)
+        let authDecoder = AuthDecoder(session: self.session)
+        let task = httpClient.execute(request: request, delegate: AuthDelegate(decoder: authDecoder), deadline: nil)
         return task.futureResult
     }
 
@@ -173,19 +171,149 @@ public class Client {
     }
     
     private func createRequest(uri: String, method: HTTPMethod) -> HTTPClient.Request {
-        let url = "https://\(host)\(uri)"
-        var request = try! HTTPClient.Request(url: url, method: method)
+        var request = try! HTTPClient.Request(url: self.url(uri: uri), method: method)
         session.headers.forEach { header in
             request.headers.add(name: header.key, value: header.value)
         }
         return request
     }
     
-    private func formData(params: [String: String]) -> HTTPClient.Body {
-        return .string(params.compactMap {
-            $0.key.addingPercentEncoding(withAllowedCharacters: .alphanumerics)! +
-            "=" +
-            $0.value.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
-        }.lazy.joined(separator: "&"))
+    private func url(uri: String) -> String {
+        return "https://\(host)\(uri)"
     }
 }
+
+
+#if compiler(>=5.5.2) && canImport(_Concurrency)
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+extension Client {
+    /// Authorize client
+    ///
+    /// - parameters:
+    ///     - username: e-mail address used as a user name at www.space-track.org
+    ///     - password: user password
+    /// - returns: Authorization result
+    public func auth(username: String, password: String, timeout: TimeAmount = .seconds(30)) async throws -> Result {
+        var request = HTTPClientRequest(url: self.url(uri: AuthDecoder.uri))
+        request.method = AuthDecoder.method
+        request.headers = AuthDecoder.requestHeaders
+        request.body = .bytes(AuthDecoder.requestBody(username: username, password: password))
+        
+        let authDecoder = AuthDecoder(session: self.session)
+        let response = try await httpClient.execute(request, timeout: timeout)
+        authDecoder.processHeader(status: response.status, headers: response.headers)
+        for try await buffer in response.body {
+            authDecoder.processChunk(buffer: buffer)
+        }
+        return authDecoder.decode()
+    }
+    
+    /// Request the list of available satellites without current information about their orbital elements
+    ///
+    /// For example, this code requests first 10 satellites, starting from 4th, with names containing "ISS" word
+    /// and sorted by name:
+    /// ```swift
+    /// let data = try await client.satelliteCatalog(
+    ///     where: Satellite.Key.name == "~~ISS~~",
+    ///     order: Satellite.Key.name.asc,
+    ///     limit: 10,
+    ///     offset: 3
+    /// )
+    /// ```
+    /// Another example. This code requests all satellites with "NOAA" word in their names, launched after 2000 year,
+    /// sorted ascending by names and descending by object ID:
+    /// ```swift
+    /// let data = try await client.satelliteCatalog(
+    ///     where: Satellite.Key.name == "~~NOAA~~" && Satellite.Key.launchYear > 2000,
+    ///     order: Satellite.Key.name.asc & Satellite.Key.objectId.desc)
+    /// ```
+    ///
+    /// - parameters:
+    ///     - where: SatellitePredicate used to filter the satellites.
+    ///     - order: Use Satellite.Key to construct the required order in the satellite list.
+    ///     - limit: Maximum count of items in the response.
+    ///     - offset: List offset.
+    ///     - timeout: Request timeout.
+    /// - returns: SatelliteCatalog. SatelliteCatalog.count field contains total number
+    ///            of the satellites, satisfied to the specified filter.
+    ///            SatelliteCatalog.data is array of selected satellites.
+    /// - seeAlso:
+    ///     - SatelliteCatalog
+    public func satelliteCatalog(where filter: SatellitePredicate = SatellitePredicate(),
+                                 order: SatelliteOrder = SatelliteOrder(),
+                                 limit: Int? = nil,
+                                 offset: Int? = nil,
+                                 timeout: TimeAmount = .seconds(30)) async throws -> SatelliteCatalog {
+        return try await getData(
+            request: SatelliteCatalogRequest(),
+            decoder: SatelliteDecoder(),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset,
+            timeout: timeout
+        )
+    }
+
+    /// Request current keplerian elements
+    ///
+    /// For example, this code requests keplerian elements for satellite with object ID "1982-092AWB":
+    /// ```swift
+    /// let data = try await client.generalPerturbations(
+    ///     where: GeneralPerturbations.Key.objectId == "1982-092AWB"
+    /// )
+    /// ```
+    ///
+    /// - parameters:
+    ///     - where: GPPredicate used to filter the data.
+    ///     - order: Use GeneralPerturbations.Key to construct the required order in the elements.
+    ///     - limit: Maximum count of items in the response.
+    ///     - offset: List offset.
+    ///     - timeout: Request timeout.
+    /// - returns: GeneralPerturbationsList.
+    ///            GeneralPerturbationsList.count field contains total number
+    ///            of the rows, satisfied to the specified filter.
+    ///            GeneralPerturbationsList.data is array of keplerian elements.
+    /// - seeAlso:
+    ///     - GeneralPerturbations
+    public func generalPerturbations(where filter: GPPredicate = GPPredicate(),
+                                     order: GPOrder = GPOrder(),
+                                     limit: Int? = nil,
+                                     offset: Int? = nil,
+                                     timeout: TimeAmount = .seconds(30)) async throws -> GeneralPerturbationsList {
+        return try await getData(
+            request: GPRequest(),
+            decoder: GPDecoder(),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset,
+            timeout: timeout
+        )
+    }
+
+    private func getData<Decoder: ResponseDecoder>(request: RequestInfo,
+                                                   decoder: Decoder,
+                                                   filter: QueryBuilder,
+                                                   order: QueryBuilder,
+                                                   limit: Int?,
+                                                   offset: Int?,
+                                                   timeout: TimeAmount) async throws -> Decoder.Output {
+        let uri = request.uri(filter: filter, order: order, limit: limit, offset: offset)
+        var request = HTTPClientRequest(url: self.url(uri: uri))
+        session.headers.forEach {
+            request.headers.add(name: $0.key, value: $0.value)
+        }
+        
+        let response = try await httpClient.execute(request, timeout: timeout)
+        if response.status != HTTPResponseStatus.ok {
+            throw Result.Unauthorized("")
+        }
+        
+        for try await buffer in response.body {
+            decoder.processChunk(buffer: buffer)
+        }
+        return try decoder.decode()
+    }
+}
+#endif

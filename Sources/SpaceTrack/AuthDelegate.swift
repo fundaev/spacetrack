@@ -26,58 +26,27 @@ import AsyncHTTPClient
 class AuthDelegate: HTTPClientResponseDelegate {
     typealias Response = Result
 
-    private let session: Session
-    private var responseStatus: HTTPResponseStatus = .ok
-    private var responseHeaders: HTTPHeaders? = nil
-    private var data = Data()
-    private var error: Error?
+    let decoder: AuthDecoder
     
-    init(session: Session) {
-        self.session = session
+    init(decoder: AuthDecoder) {
+        self.decoder = decoder
     }
     
     func didReceiveHead(task: HTTPClient.Task<Result>, _ head: HTTPResponseHead) -> EventLoopFuture<Void> {
-        responseStatus = head.status
-        responseHeaders = head.headers
+        decoder.processHeader(status: head.status, headers: head.headers)
         return task.eventLoop.makeSucceededFuture(())
     }
     
     func didReceiveBodyPart(task: HTTPClient.Task<Result>, _ buffer: ByteBuffer) -> EventLoopFuture<Void> {
-        data.append(contentsOf: buffer.readableBytesView)
+        decoder.processChunk(buffer: buffer)
         return task.eventLoop.makeSucceededFuture(())
     }
     
     func didReceiveError(task: HTTPClient.Task<Result>, _ error: Error) {
-        self.error = error
+        decoder.processError(error: error)
     }
     
     func didFinishRequest(task: HTTPClient.Task<Result>) throws -> Result {
-        if error != nil {
-            return .RequestError(error!.localizedDescription)
-        }
-        
-        let message = responseString()
-        if responseStatus == .unauthorized || (responseStatus == .ok && !message.isEmpty) {
-            return .Unauthorized(message)
-        }
-        
-        if responseStatus != .ok {
-            return .RequestError(message)
-        }
-        
-        if let headers = responseHeaders {
-            session.process(headers: headers)
-        }
-        return .Success
+        return decoder.decode()
     }
-    
-    private func responseString() -> String {
-        let decoder = JSONDecoder()
-        let response = try? decoder.decode(AuthResponse.self, from: data)
-        return response?.Login ?? ""
-    }
-}
-
-struct AuthResponse: Codable {
-    var Login: String
 }
