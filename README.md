@@ -147,7 +147,9 @@ do {
 To get the keplerian elements of the satellite one should use `generalPerturbations` method:
 
 ```swift
-let response = try await client.generalPerturbations(where: GeneralPerturbations.Key.noradCatId == 25544)
+let response = try await client.generalPerturbations(
+    where: GeneralPerturbations.Key.noradCatId == 25544
+)
 for gp in response.data {
     print("\(gp.semimajorAxis)")
 }
@@ -167,7 +169,9 @@ print("\(response.data.count) item(s) from \(response.count)")
 Use `requestGeneralPerturbation` method if you don't want to deal with Swift Concurrency.
 
 ```swift
-let gpFuture = client.requestGeneralPerturbations(where: GeneralPerturbations.Key.noradCatId == 25544)
+let gpFuture = client.requestGeneralPerturbations(
+    where: GeneralPerturbations.Key.noradCatId == 25544
+)
 do {
     let result = try gpFuture.wait()
     for gp in result.data {
