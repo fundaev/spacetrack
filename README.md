@@ -57,26 +57,70 @@ let client = Client(eventLoopGroupProvider: .createNew)
 
 Since the client is created it is necessary to authorize it to be able to receive the satellites data. For that one must
 have an account on [www.space-track.org](https://www.space-track.org).
+
+```swift
+let authResult = try await client.auth(username: "your.username@test.info", password: "123456")
+if (authResult != Result.Success) {
+    // handle failed authentication
+}
+```
+<details>
+<summary>
+<p>
+
+#### ► With EventLoopFuture
+
+</p>
+</summary>
+<p>
+There is alternative method for authentication, which doesn't use Swift Concurrency:
+
 ```swift
 let authFuture = client.authorize(username: "your.username@test.info", password: "123456")
 do {
     let result = try authFuture.wait()
     if (result != Result.Success) {
-        print("Authorization failed: \(result)")
-        exit(1)
+        // handle failed authentication
     }
 } catch {
-    print("Error during authorization occured: \(error)")
-    exit(2)
+    // handle failed authentication
 }
-``` 
+```
 
-### Request satellite catalog
+</p>
+</details>
 
-Use `requestSatelliteCatalog` to get the available list of the satellites.
+### Satellite catalog
+
+To get the available list of the satellites one should use `satelliteCatalog` method.
 
 For example, let's request first 10 satellites with "NOAA" word in their names,
 launched after 2000 year and sorted by name:
+```swift
+let response = try await client.satelliteCatalog(
+    where: Satellite.Key.name == "~~NOAA~~" && Satellite.Key.launchYear > 2000,
+    order: Satellite.Key.name.asc,
+    limit: 10
+)
+
+for satellite in response.data {
+    print("\(sat.name)")
+}
+print("-------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+<details>
+<summary>
+<p>
+
+#### ► With EventLoopFuture
+
+</p>
+</summary>
+<p>
+Use `requestSatelliteCatalog` method if you don't want to deal with Swift Concurrency.
+
 ```swift
 let satFuture = client.requestSatelliteCatalog(
     where: Satellite.Key.name == "~~NOAA~~" && Satellite.Key.launchYear > 2000,
@@ -95,9 +139,32 @@ do {
 }
 ```
 
-### Request general perturbations (keplerian elements)
+</p>
+</details>
 
-To get the keplerian elements of the satellite one should use `requestGeneralPerturbations` method:
+### General perturbations (keplerian elements)
+
+To get the keplerian elements of the satellite one should use `generalPerturbations` method:
+
+```swift
+let response = client.generalPerturbations(where: GeneralPerturbations.Key.noradCatId == 25544)
+for item in response.data {
+    print("\(gp.semimajorAxis)")
+}
+print("-------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+<details>
+<summary>
+<p>
+
+#### ► With EventLoopFuture
+
+</p>
+</summary>
+<p>
+Use `requestGeneralPerturbation` method if you don't want to deal with Swift Concurrency.
 
 ```swift
 let gpFuture = client.requestGeneralPerturbations(where: GeneralPerturbations.Key.noradCatId == 25544)
@@ -112,3 +179,6 @@ do {
     print("Error: \(error)")
 }
 ```
+
+</p>
+</details>
