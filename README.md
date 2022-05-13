@@ -104,7 +104,7 @@ let response = try await client.satelliteCatalog(
 )
 
 for satellite in response.data {
-    print("\(sat.name)")
+    print("\(satellite.name)")
 }
 print("-------------------------------")
 print("\(response.data.count) item(s) from \(response.count)")
@@ -148,7 +148,7 @@ To get the keplerian elements of the satellite one should use `generalPerturbati
 
 ```swift
 let response = try await client.generalPerturbations(where: GeneralPerturbations.Key.noradCatId == 25544)
-for item in response.data {
+for gp in response.data {
     print("\(gp.semimajorAxis)")
 }
 print("-------------------------------")
