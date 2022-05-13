@@ -147,7 +147,7 @@ do {
 To get the keplerian elements of the satellite one should use `generalPerturbations` method:
 
 ```swift
-let response = client.generalPerturbations(where: GeneralPerturbations.Key.noradCatId == 25544)
+let response = try await client.generalPerturbations(where: GeneralPerturbations.Key.noradCatId == 25544)
 for item in response.data {
     print("\(gp.semimajorAxis)")
 }
