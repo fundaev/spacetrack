@@ -77,12 +77,8 @@ There is alternative method for authentication, which doesn't use Swift Concurre
 
 ```swift
 let authFuture = client.authorize(username: "your.username@test.info", password: "123456")
-do {
-    let result = try authFuture.wait()
-    if (result != Result.Success) {
-        // handle failed authentication
-    }
-} catch {
+let result = try authFuture.wait()
+if (result != Result.Success) {
     // handle failed authentication
 }
 ```
@@ -127,16 +123,12 @@ let satFuture = client.requestSatelliteCatalog(
     order: Satellite.Key.name.asc,
     limit: 10
 )
-do {
-    let result = try satFuture.wait()
-    for sat in result.data {
-        print("\(sat.name)")
-    }
-    print("-------------------------------")
-    print("\(result.data.count) item(s) from \(result.count)")
-} catch {
-    print("Error: \(error)")
+let result = try satFuture.wait()
+for sat in result.data {
+    print("\(sat.name)")
 }
+print("-------------------------------")
+print("\(result.data.count) item(s) from \(result.count)")
 ```
 
 </p>
@@ -172,16 +164,12 @@ Use `requestGeneralPerturbation` method if you don't want to deal with Swift Con
 let gpFuture = client.requestGeneralPerturbations(
     where: GeneralPerturbations.Key.noradCatId == 25544
 )
-do {
-    let result = try gpFuture.wait()
-    for gp in result.data {
-        print("\(gp.semimajorAxis)")
-    }
-    print("-------------------------------")
-    print("\(result.data.count) item(s) from \(result.count)")
-} catch {
-    print("Error: \(error)")
+let result = try gpFuture.wait()
+for gp in result.data {
+    print("\(gp.semimajorAxis)")
 }
+print("-------------------------------")
+print("\(result.data.count) item(s) from \(result.count)")
 ```
 
 </p>
