@@ -6,12 +6,12 @@ API.
 
 Currently the package supports satellite catalog and keplerian elements (general perturbations) requests only.
 
-## Adding dependencies
+## 1 Installation
 
-Add this line into `dependencies` array in Package.swift file to use SpaceTrack package:
+To add SpaceTrack package into your project one should insert this line into `dependencies` array in your Package.swift file:
 
 ```swift
-.package(url: "https://github.com/fundaev/spacetrack.git", from: "1.0.0"),
+.package(url: "https://github.com/fundaev/spacetrack.git", from: "1.1.0"),
 ``` 
 
 One should also add something like that:
@@ -22,17 +22,25 @@ One should also add something like that:
 
 in your target specification.
 
-## Usage
+## 2 Client
 
-### SpaceTrack.Client
+The `Client` class is "entry point" of this package. It's responsible for:
+1. Authentication;
+2. Receiving data from [www.space-track.org](https://www.space-track.org).
 
-The `Client` class is "entry point" of this package. It allows to request the data from
- [www.space-track.org](https://www.space-track.org).  
+It uses [AsyncHTTPClient](https://github.com/swift-server/async-http-client.git)
+package, based on [swift-nio](https://github.com/apple/swift-nio) package, and threfore requires `EventLoopGroup` instance.
 
-To perform the HTTP-requests the `Client` uses [AsyncHTTPClient](https://github.com/swift-server/async-http-client.git)
-package, based on [swift-nio](https://github.com/apple/swift-nio) package. Thus to create an instance of the `Client`
-type it is necessary to create event loop group first:
-
+You may ask client to create this group:
+```swift
+import Foundation
+import NIOCore
+import SpaceTrack 
+...
+let client = Client(eventLoopGroupProvider: .createNew)
+...
+```
+or pass already existing one:
 ```swift
 import Foundation
 import NIOCore
@@ -44,19 +52,12 @@ let client = Client(eventLoopGroupProvider: .shared(eventLoopGroup))
 ```
 
 Alternatively one can ask client to create event loop group itself:
-```swift
-import Foundation
-import NIOCore
-import SpaceTrack 
-...
-let client = Client(eventLoopGroupProvider: .createNew)
-...
-```
 
-### Authentication
+## 3 Authentication
 
-Since the client is created it is necessary to authorize it to be able to receive the satellites data. For that one must
-have an account on [www.space-track.org](https://www.space-track.org).
+[www.space-track.org](https://www.space-track.org) provides a data to registered users only. It means that you should create an account there if you don't have it yet.  
+
+To receive a data you should authorize the client instance.
 
 ```swift
 let authResult = try await client.auth(username: "your.username@test.info", password: "123456")
@@ -86,7 +87,47 @@ if (result != Result.Success) {
 </p>
 </details>
 
-### Satellite catalog
+## 4 SpaceTrack entities
+
+[www.space-track.org](https://www.space-track.org) provides several kinds of data: satellite catalog, general perturbations, predicted and historical decay information etc. Each of them can be requested by a specifiec request. The corresponding responses contains a list of some entities.
+
+For example, the response for satellite catalog request contains a list of satellites. The satellite in this terminology is just set of properties: satellite name, number, launch date, launch number in the year etc.
+
+SpaceTrack package provides speciel public structures for each of these entities. Let's name them entities structures. The received entities list is wrapped by another structure, containing the list itself and the total number of such entities, satisfying the provided filter. 
+
+### 4.1 Filters
+
+To support filters each entity structure provides `Key` enumiration. Its members represent the properties of coresponding entities. This enumiration supports the following operators: `==`, `!=`,  `<`, `>`. One should use them to construct some filter. For example:
+```swift
+let filter = Satellite.Key.name == "NOAA 17"
+```
+
+There are also such methods as `oneOf` and `between`:
+```swift
+let filter1 = Satellite.Key.noradCatId.oneOf(values: [25544, 23118, 19186])
+let filter2 = Satellite.Key.launchYear.between(from: 2007, to: 2022)
+```
+One may construct filter with several conditions using `$$` operator:
+```swift
+let filter = Satellite.Key.name == "NOAA" && Satellite.Key.launchYear.between(from: 2007, to: 2022)
+```
+
+### 4.2 Sorting
+
+`Key` enumirations can be used to sort the requested entities list. For that `Key` provides `asc` and `desc` read-only properties:
+```swift
+let order1 = Satellite.Key.name.asc
+let order2 = Satellite.Key.launchYear.desc
+```
+
+You may sort the result by several fields using `&` operator:
+```swift
+let order = Satellite.Key.name.asc & Satellite.Key.launchYear.desc
+```
+
+## 5 Supported entities
+
+### 5.1 Satellite catalog
 
 To get the available list of the satellites one should use `satelliteCatalog` method.
 
@@ -96,7 +137,8 @@ launched after 2000 year and sorted by name:
 let response = try await client.satelliteCatalog(
     where: Satellite.Key.name == "~~NOAA~~" && Satellite.Key.launchYear > 2000,
     order: Satellite.Key.name.asc,
-    limit: 10
+    limit: 10,
+    offset: 100
 )
 
 for satellite in response.data {
@@ -121,7 +163,8 @@ Use `requestSatelliteCatalog` method if you don't want to deal with Swift Concur
 let satFuture = client.requestSatelliteCatalog(
     where: Satellite.Key.name == "~~NOAA~~" && Satellite.Key.launchYear > 2000,
     order: Satellite.Key.name.asc,
-    limit: 10
+    limit: 10,
+    offset: 100
 )
 let result = try satFuture.wait()
 for sat in result.data {
@@ -134,13 +177,16 @@ print("\(result.data.count) item(s) from \(result.count)")
 </p>
 </details>
 
-### General perturbations (keplerian elements)
+### 5.2 General perturbations (keplerian elements)
 
 To get the keplerian elements of the satellite one should use `generalPerturbations` method:
 
 ```swift
 let response = try await client.generalPerturbations(
-    where: GeneralPerturbations.Key.noradCatId == 25544
+    where: GeneralPerturbations.Key.noradCatId == 25544,
+    order: GeneralPerturbations.Key.noradCatId.asc,
+    limit: 10,
+    offset: 0
 )
 for gp in response.data {
     print("\(gp.semimajorAxis)")
@@ -162,7 +208,10 @@ Use `requestGeneralPerturbation` method if you don't want to deal with Swift Con
 
 ```swift
 let gpFuture = client.requestGeneralPerturbations(
-    where: GeneralPerturbations.Key.noradCatId == 25544
+    where: GeneralPerturbations.Key.noradCatId == 25544,
+    order: GeneralPerturbations.Key.noradCatId.asc,
+    limit: 10,
+    offset: 0
 )
 let result = try gpFuture.wait()
 for gp in result.data {
