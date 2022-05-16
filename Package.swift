@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.4
 
 // Copyright (c) 2022 Sergei Fundaev
 //
