@@ -1,4 +1,7 @@
+![Swift](https://img.shields.io/badge/Swift-%3E%3D%205.2-orange)
+![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20MacOS%20%7C%20tvOS%20%7C%20watchOS%20%7C%20Linux-blue)
 [![Swift](https://github.com/fundaev/spacetrack/actions/workflows/swift.yml/badge.svg)](https://github.com/fundaev/spacetrack/actions/workflows/swift.yml)
+
 # SpaceTrack
 
 The SpaceTrack package allows to interact with [www.space-track.org](https://www.space-track.org)
