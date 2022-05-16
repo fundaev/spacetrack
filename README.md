@@ -4,7 +4,15 @@
 The SpaceTrack package allows to interact with [www.space-track.org](https://www.space-track.org)
 API.
 
-Currently the package supports satellite catalog and keplerian elements (general perturbations) requests only.
+1. [Installation](#1-installation)
+2. [Client](#2-client)
+3. [Authentication](#3-authentication)
+4. [SpaceTrack entities](#4-spacetrack-entities)
+    - [Filters](#41-filters)
+    - [Sorting](#42-sorting)
+5. [Supported entities](#5-supported-entities)
+    - [Satellite catalog](#51-satellite-catalog)
+    - [General perturbations](#52-general-perturbations)
 
 ## 1 Installation
 
@@ -177,7 +185,7 @@ print("\(result.data.count) item(s) from \(result.count)")
 </p>
 </details>
 
-### 5.2 General perturbations (keplerian elements)
+### 5.2 General perturbations
 
 To get the keplerian elements of the satellite one should use `generalPerturbations` method:
 
