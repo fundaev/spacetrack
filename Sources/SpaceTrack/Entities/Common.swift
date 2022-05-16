@@ -27,23 +27,23 @@ struct Metadata: Decodable {
     var requestTime: String = ""
     var returnedRows: Int = 0
     var total: Int = 0
-    
+
     private enum CodingKeys: String, CodingKey {
-        case dataSize     = "DataSize"
-        case limit        = "Limit"
-        case offset       = "LimitOffset"
-        case requestTime  = "RequestTime"
+        case dataSize = "DataSize"
+        case limit = "Limit"
+        case offset = "LimitOffset"
+        case requestTime = "RequestTime"
         case returnedRows = "ReturnedRows"
-        case total        = "Total"
+        case total = "Total"
     }
 }
 
 struct ResponseWithMetadata<Entity: Decodable>: Decodable {
     var metadata: Metadata
     var data: [Entity]
-    
+
     private enum CodingKeys: String, CodingKey {
         case metadata = "request_metadata"
-        case data     = "data"
+        case data
     }
 }

@@ -25,68 +25,66 @@ import NIOHTTP1
 class AuthDecoder {
     private let session: Session
     private var responseStatus: HTTPResponseStatus = .ok
-    private var responseHeaders: HTTPHeaders? = nil
+    private var responseHeaders: HTTPHeaders?
     private var data = Data()
     private var error: Error?
-    
+
     static func requestBody(username: String, password: String) -> ByteBuffer {
         let params = [
             "identity": username,
-            "password": password
+            "password": password,
         ]
 
         let text = params.compactMap {
             $0.key.addingPercentEncoding(withAllowedCharacters: .alphanumerics)! +
-            "=" +
-            $0.value.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
+                "=" +
+                $0.value.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
         }.lazy.joined(separator: "&")
 
         return ByteBuffer(string: text)
     }
-    
+
     static var method: HTTPMethod { .POST }
-    
+
     static var requestHeaders: HTTPHeaders {
-        get {
-            var headers = HTTPHeaders()
-            headers.add(name: "Content-Type", value: "application/x-www-form-urlencoded")
-            return headers
-        }
+        var headers = HTTPHeaders()
+        headers.add(name: "Content-Type", value: "application/x-www-form-urlencoded")
+        return headers
     }
-    
+
     static var uri: String { "/ajaxauth/login" }
 
     init(session: Session) {
         self.session = session
     }
-    
+
     func processHeader(status: HTTPResponseStatus, headers: HTTPHeaders) {
-        self.responseStatus = status
-        self.responseHeaders = headers
+        responseStatus = status
+        responseHeaders = headers
     }
-    
+
     func processChunk(buffer: ByteBuffer) {
-        self.data.append(contentsOf: buffer.readableBytesView)
+        data.append(contentsOf: buffer.readableBytesView)
     }
-    
+
     func processError(error: Error) {
         self.error = error
     }
-    
+
     func decode() -> Result {
         if error != nil {
             return .RequestError(error!.localizedDescription)
         }
-        
+
         let message = responseString()
         if responseStatus == .unauthorized || (responseStatus == .ok && !message.isEmpty) {
             return .Unauthorized(message)
         }
-        
+
         if responseStatus != .ok {
             return .RequestError(message)
         }
-        
+
         if let headers = responseHeaders {
             session.process(headers: headers)
         }

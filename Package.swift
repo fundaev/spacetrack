@@ -27,7 +27,8 @@ let package = Package(
     products: [
         .library(
             name: "SpaceTrack",
-            targets: ["SpaceTrack"]),
+            targets: ["SpaceTrack"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.10.0"),
@@ -36,10 +37,12 @@ let package = Package(
         .target(
             name: "SpaceTrack",
             dependencies: [
-                .product(name: "AsyncHTTPClient", package: "async-http-client")
-            ]),
+                .product(name: "AsyncHTTPClient", package: "async-http-client"),
+            ]
+        ),
         .testTarget(
             name: "SpaceTrackTests",
-            dependencies: ["SpaceTrack"]),
+            dependencies: ["SpaceTrack"]
+        ),
     ]
 )

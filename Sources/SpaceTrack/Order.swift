@@ -25,19 +25,20 @@ struct OrderItem<Key: EntityField>: QueryBuilder {
         case asc
         case desc
     }
+
     var key: Key
     var direction: Direction
-    
+
     init(for key: Key, direction: Direction = .asc) {
         self.key = key
         self.direction = direction
     }
-    
+
     var query: String {
-        let dir = self.direction == .desc ? "%20desc" : ""
+        let dir = direction == .desc ? "%20desc" : ""
         return "\(key.rawValue)\(dir)"
     }
-    
+
     func toOrder() -> Order<Key> {
         return Order(item: self)
     }
@@ -56,14 +57,14 @@ struct OrderItem<Key: EntityField>: QueryBuilder {
 /// To create non-empty `Order` one should use `asc()` and `desc()` methods of `EntityField` protocol extension.
 public struct Order<Key: EntityField>: QueryBuilder {
     var items: [OrderItem<Key>]
-    
+
     /// Create empty order
     public init() {
-        self.items = []
+        items = []
     }
 
     init(item: OrderItem<Key>) {
-        self.items = [item]
+        items = [item]
     }
 
     init(items: [OrderItem<Key>]) {
@@ -71,10 +72,10 @@ public struct Order<Key: EntityField>: QueryBuilder {
     }
 
     var query: String {
-        if self.items.isEmpty {
+        if items.isEmpty {
             return ""
         }
-        return "/orderby/" + self.items.map{ $0.query }.joined(separator: ",")
+        return "/orderby/" + items.map { $0.query }.joined(separator: ",")
     }
 
     /// Join two orders
@@ -89,13 +90,12 @@ public struct Order<Key: EntityField>: QueryBuilder {
     ///     - rhs: Second order
     /// - returns: Order structure containing the data from both parameters.
     ///            It allows to sort the result by several fields.
-    static public func & (lhs: Order<Key>, rhs: Order<Key>) -> Order<Key> {
+    public static func & (lhs: Order<Key>, rhs: Order<Key>) -> Order<Key> {
         var res = Order<Key>(items: lhs.items)
         res.items.append(contentsOf: rhs.items)
         return res
     }
 }
-
 
 public extension EntityField {
     /// Create `Order` structure to sort the data by EntityField ascendingly

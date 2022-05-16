@@ -18,14 +18,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import XCTest
 import class Foundation.Bundle
 import NIOCore
+import XCTest
 
 @testable import SpaceTrack
 
 final class GPTests: XCTestCase {
-    
     func testGPWithNulls() {
         let text = """
             {
@@ -94,14 +93,14 @@ final class GPTests: XCTestCase {
             XCTFail("Failed to decode: \(error)")
             return
         }
-        
+
         XCTAssertEqual(42, response.count)
-        
+
         if response.data.count != 1 {
             XCTFail("Wrong items count: \(response.data.count) while 1 is expected")
             return
         }
-        
+
         let item = response.data[0]
         XCTAssertNil(item.apoapsis)
         XCTAssertNil(item.argOfPericenter)
@@ -134,11 +133,11 @@ final class GPTests: XCTestCase {
         XCTAssertNil(item.tleLine0)
         XCTAssertNil(item.tleLine1)
         XCTAssertNil(item.tleLine2)
-        
+
         XCTAssertEqual(item.ccsdsOmmVers, "2.0")
         XCTAssertEqual(item.centerName, "EARTH")
         XCTAssertEqual(item.comment, "test")
-        XCTAssertEqual(item.gpId, 194161434)
+        XCTAssertEqual(item.gpId, 194_161_434)
         XCTAssertEqual(item.meanElementTheory, "SGP4")
         XCTAssertEqual(item.noradCatId, 4793)
         XCTAssertEqual(item.originator, "18 SPCS")
@@ -214,14 +213,14 @@ final class GPTests: XCTestCase {
             XCTFail("Failed to decode: \(error)")
             return
         }
-        
+
         XCTAssertEqual(1, response.count)
-        
+
         if response.data.count != 1 {
             XCTFail("Wrong items count: \(response.data.count) while 1 is expected")
             return
         }
-        
+
         let item = response.data[0]
         XCTAssertEqual(item.apoapsis, 1472.423)
         XCTAssertEqual(item.argOfPericenter, 252.3054)
@@ -237,9 +236,9 @@ final class GPTests: XCTestCase {
         XCTAssertEqual(item.elementSetNo, 999)
         XCTAssertEqual(item.ephemerisType, 0)
         XCTAssertEqual(item.epoch,
-            Date.from(year: 2022, month: 01, day: 19, hour: 3, minute: 14, second: 5, nanosecond: 847360000))
-        XCTAssertEqual(item.file, 3277020)
-        XCTAssertEqual(item.gpId, 194161434)
+                       Date.from(year: 2022, month: 01, day: 19, hour: 3, minute: 14, second: 5, nanosecond: 847_360_000))
+        XCTAssertEqual(item.file, 3_277_020)
+        XCTAssertEqual(item.gpId, 194_161_434)
         XCTAssertEqual(item.inclination, 101.5802)
         XCTAssertEqual(item.launchDate, Date.from(year: 1970, month: 12, day: 11))
         XCTAssertEqual(item.meanAnomaly, 161.3476)

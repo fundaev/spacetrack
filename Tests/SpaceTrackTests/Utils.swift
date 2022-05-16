@@ -22,7 +22,8 @@ import Foundation
 
 extension Date {
     static func from(year: Int, month: Int, day: Int,
-                     hour: Int = 0, minute: Int = 0, second: Int = 0, nanosecond: Int = 0) -> Date? {
+                     hour: Int = 0, minute: Int = 0, second: Int = 0, nanosecond: Int = 0) -> Date?
+    {
         var components = DateComponents()
         components.timeZone = TimeZone(secondsFromGMT: 0)!
         components.year = year
@@ -32,7 +33,7 @@ extension Date {
         components.minute = minute
         components.second = second
         components.nanosecond = nanosecond
-        
+
         return Calendar(identifier: .gregorian).date(from: components)
     }
 }

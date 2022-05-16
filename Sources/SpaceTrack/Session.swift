@@ -18,32 +18,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import NIOHTTP1
 import AsyncHTTPClient
 import Foundation
+import NIOHTTP1
 
 class Session {
     private let hostname: String
     private var cookies: [HTTPClient.Cookie] = []
     private var lock = NSLock()
-    
+
     init(hostname: String) {
         self.hostname = hostname
     }
-    
+
     var headers: [String: String] {
-        get {
-            lock.lock()
-            defer {
-                lock.unlock()
-            }
-            return [
-                "Host": hostname,
-                "Cookie": cookies.map{"\($0.name)=\($0.value)"}.joined(separator: "; ")
-            ]
+        lock.lock()
+        defer {
+            lock.unlock()
         }
+        return [
+            "Host": hostname,
+            "Cookie": cookies.map { "\($0.name)=\($0.value)" }.joined(separator: "; "),
+        ]
     }
-    
+
     var hasCookies: Bool {
         lock.lock()
         defer {
@@ -51,7 +49,7 @@ class Session {
         }
         return !cookies.isEmpty
     }
-    
+
     func process(headers: HTTPHeaders) {
         lock.lock()
         defer {
@@ -63,7 +61,7 @@ class Session {
             }
         }
     }
-    
+
     private func append(cookie: HTTPClient.Cookie) {
         if let index = (cookies.firstIndex { $0.name == cookie.name }) {
             cookies[index] = cookie

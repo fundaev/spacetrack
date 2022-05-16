@@ -21,9 +21,9 @@
 import Foundation
 import Network
 
-fileprivate extension String {
+private extension String {
     func toValidUri() -> String {
-        return self.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)!
+        return addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)!
             .replacingOccurrences(of: "/", with: "%2F")
             .replacingOccurrences(of: "*", with: "%2A")
     }
@@ -36,21 +36,21 @@ enum RValue {
     case notEqual(String?)
     case oneOf([String?])
     case between(String, String)
-    
+
     func toString() -> String {
         let null = "null-val"
         switch self {
-        case .less(let value):
+        case let .less(value):
             return ("<" + value).toValidUri()
-        case .greater(let value):
+        case let .greater(value):
             return (">" + value).toValidUri()
-        case .equal(let value):
+        case let .equal(value):
             return value?.toValidUri() ?? null
-        case .notEqual(let value):
+        case let .notEqual(value):
             return ("<>" + (value ?? null)).toValidUri()
-        case .oneOf(let values):
-            return values.map{ $0?.toValidUri() ?? null }.joined(separator: ",")
-        case .between(let from, let to):
+        case let .oneOf(values):
+            return values.map { $0?.toValidUri() ?? null }.joined(separator: ",")
+        case let .between(from, to):
             return from.toValidUri() + "--" + to.toValidUri()
         }
     }
@@ -59,7 +59,7 @@ enum RValue {
 struct PredicateItem<Key: EntityField> {
     let lhs: Key
     let rhs: RValue
-    
+
     init(lhs: Key, rhs: RValue) {
         self.lhs = lhs
         self.rhs = rhs
@@ -68,7 +68,7 @@ struct PredicateItem<Key: EntityField> {
     var query: String {
         return "/" + lhs.rawValue + "/" + rhs.toString()
     }
-    
+
     func toPredicate() -> Predicate<Key> {
         return Predicate(data: [self])
     }
@@ -81,7 +81,7 @@ struct PredicateItem<Key: EntityField> {
 /// - Key
 /// - Operator
 /// - Value
-/// 
+///
 /// Key is some EntityField. For example, `Satellite.Key`.
 /// The list of supported operators is defined by [Space-Track API](https://www.space-track.org/documentation#/api)
 /// And finally a Value is some value of String type or some other `LosslessStringConvertible`
@@ -91,24 +91,22 @@ struct PredicateItem<Key: EntityField> {
 /// such as `==`, `!=`, `<`, `>`, `between`, `oneOf` etc.
 public struct Predicate<Key: EntityField>: QueryBuilder {
     var data: [PredicateItem<Key>] = []
-    
-    
+
     /// Create empty predicate
     ///
     /// Empty predicate means "do not filter the result".
     ///
     /// To creare not-empty predicate one should use the operators of `EntityField` protocol
-    public init() {
-    }
-    
+    public init() {}
+
     init(data: [PredicateItem<Key>]) {
         self.data = data
     }
-    
+
     var query: String {
-        return data.map{ $0.query }.joined()
+        return data.map { $0.query }.joined()
     }
-    
+
     /// Join predicates by AND condition
     ///
     /// It can be used for example by this way:
@@ -129,7 +127,7 @@ public struct Predicate<Key: EntityField>: QueryBuilder {
     ///     - rhs: Second predicate
     /// - returns:
     ///     Predicate containing the data of both lhs and rhs predicates
-    static public func && (lhs: Predicate<Key>, rhs: Predicate<Key>) -> Predicate<Key> {
+    public static func && (lhs: Predicate<Key>, rhs: Predicate<Key>) -> Predicate<Key> {
         var res = Predicate<Key>(data: lhs.data)
         res.data.append(contentsOf: rhs.data)
         return res
@@ -373,8 +371,8 @@ public extension EntityField {
     ///     - values: The array of values
     /// - returns: Non-empty predicate
     func oneOf<T: LosslessStringConvertible>(values: [T?]) -> Predicate<Self> {
-        let data = values.map{ value in
-            return value != nil ? String(value!) : nil
+        let data = values.map { value in
+            value != nil ? String(value!) : nil
         }
         return PredicateItem<Self>(lhs: self, rhs: .oneOf(data)).toPredicate()
     }
@@ -438,12 +436,12 @@ public extension EntityField {
     func between(from: Date, to: Date) -> Predicate<Self> {
         return PredicateItem<Self>(
             lhs: self,
-            rhs: .between(from.toString(format: self.dateFormat), to.toString(format: self.dateFormat))
+            rhs: .between(from.toString(format: dateFormat), to.toString(format: dateFormat))
         ).toPredicate()
     }
 }
 
-fileprivate extension Int {
+private extension Int {
     func toString(width: Int) -> String {
         var text = "\(self)"
         if text.count < width {
@@ -453,29 +451,29 @@ fileprivate extension Int {
     }
 }
 
-fileprivate extension Date {
+private extension Date {
     func toString(format: DateFormat) -> String {
         let c = Calendar.current.dateComponents(in: TimeZone(secondsFromGMT: 0)!, from: self)
         let yearItems = [
             c.year?.toString(width: 4) ?? "<none>",
             c.month?.toString(width: 2) ?? "<none>",
-            c.day?.toString(width: 2) ?? "<none>"
+            c.day?.toString(width: 2) ?? "<none>",
         ]
         var text = yearItems.joined(separator: "-")
         if !format.hasTime() {
             return text
         }
-        
+
         let dayItems = [
             c.hour?.toString(width: 2) ?? "<none>",
             c.minute?.toString(width: 2) ?? "<none>",
-            c.second?.toString(width: 2) ?? "<none>"
+            c.second?.toString(width: 2) ?? "<none>",
         ]
         text += "T" + dayItems.joined(separator: ":")
         if !format.hasMicrosecond() {
             return text
         }
-        
+
         if let nanosecond = c.nanosecond {
             text += "." + (nanosecond / 1000).toString(width: 6)
         }

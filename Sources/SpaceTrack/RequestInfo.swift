@@ -27,7 +27,7 @@ protocol RequestInfo {
     var resource: String { get }
     var distinct: Bool { get }
     var metadata: Bool { get }
-    
+
     func uri(filter: QueryBuilder, order: QueryBuilder, limit: Int?, offset: Int?) -> String
 }
 
@@ -40,19 +40,19 @@ extension RequestInfo {
                 limitString += ",\(offset)"
             }
         }
-        
+
         var distinctString = ""
         if distinct {
             distinctString = "/distinct/true"
         }
-        
+
         var metadataString = ""
         if metadata {
             metadataString = "/metadata/true"
         }
         return """
-            /\(controller.rawValue)/\(action.rawValue)/class/\(resource)\(filter.query)\
-            \(order.query)\(limitString)/format/\(format.rawValue)\(distinctString)\(metadataString)
-            """
+        /\(controller.rawValue)/\(action.rawValue)/class/\(resource)\(filter.query)\
+        \(order.query)\(limitString)/format/\(format.rawValue)\(distinctString)\(metadataString)
+        """
     }
 }

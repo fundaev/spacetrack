@@ -23,11 +23,11 @@ import NIOCore
 
 struct ParsingError: Error {
     let message: String
-    
+
     init(message: String) {
         self.message = message
     }
-    
+
     public var localizedDescription: String {
         return message
     }
@@ -56,22 +56,24 @@ extension Bool: ConvertableFromString {
 }
 
 func decodeOptional<T, Key>(container: KeyedDecodingContainer<Key>,
-                            forKey key: Key) throws -> T? where T: ConvertableFromString {
+                            forKey key: Key) throws -> T? where T: ConvertableFromString
+{
     let stringValue = try container.decodeIfPresent(String.self, forKey: key)
     if stringValue == nil {
         return nil
     }
-    
+
     let value = T(stringValue!)
     if value == nil {
         throw ParsingError(message: "Unexpected value: expecting \(T.self) while \"\(stringValue!)\" is provided")
     }
-    
+
     return value!
 }
 
 func decode<T, Key>(container: KeyedDecodingContainer<Key>,
-                    forKey key: Key) throws -> T where T: ConvertableFromString {
+                    forKey key: Key) throws -> T where T: ConvertableFromString
+{
     let stringValue = try container.decode(String.self, forKey: key)
     let value = T(stringValue)
     if value == nil {
@@ -80,14 +82,14 @@ func decode<T, Key>(container: KeyedDecodingContainer<Key>,
     return value!
 }
 
-fileprivate func parse<T: Decodable>(from data: Data) throws -> T {
+private func parse<T: Decodable>(from data: Data) throws -> T {
     let decoder = JSONDecoder()
     return try decoder.decode(T.self, from: data)
 }
 
 class JsonResponseDecoder<Entity> {
     var data = Data()
-    
+
     func processChunk(buffer: ByteBuffer) {
         data.append(contentsOf: buffer.readableBytesView)
     }
@@ -101,19 +103,19 @@ extension JsonResponseDecoder where Entity: Decodable {
 
 extension JsonResponseDecoder where Entity: Decodable & OptionalResponse {
     func decode() throws -> Entity {
-        if (String(data: data, encoding: .utf8) == Entity.emptyResult) {
+        if String(data: data, encoding: .utf8) == Entity.emptyResult {
             return Entity()
         }
         return try parse(from: data)
     }
 }
 
-class JsonResponseConverter<InputEntity, OutputEntity>: JsonResponseDecoder<InputEntity> {
-}
+class JsonResponseConverter<InputEntity, OutputEntity>: JsonResponseDecoder<InputEntity> {}
 
 extension JsonResponseConverter where InputEntity: Decodable,
-                                      OutputEntity: Convertable,
-                                      OutputEntity.SourceType == InputEntity {
+    OutputEntity: Convertable,
+    OutputEntity.SourceType == InputEntity
+{
     func decode() throws -> OutputEntity {
         let response: InputEntity = try parse(from: data)
         return OutputEntity(from: response)
@@ -121,10 +123,11 @@ extension JsonResponseConverter where InputEntity: Decodable,
 }
 
 extension JsonResponseConverter where InputEntity: Decodable,
-                                      OutputEntity: Convertable & OptionalResponse,
-                                      OutputEntity.SourceType == InputEntity {
+    OutputEntity: Convertable & OptionalResponse,
+    OutputEntity.SourceType == InputEntity
+{
     func decode() throws -> OutputEntity {
-        if (String(data: data, encoding: .utf8) == OutputEntity.emptyResult) {
+        if String(data: data, encoding: .utf8) == OutputEntity.emptyResult {
             return OutputEntity()
         }
         let response: InputEntity = try parse(from: data)

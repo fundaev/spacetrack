@@ -18,14 +18,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import XCTest
 import class Foundation.Bundle
 import NIOCore
+import XCTest
 
 @testable import SpaceTrack
 
 final class SatelliteTests: XCTestCase {
-    
     func testSateliteWithNulls() {
         let text = """
             {
@@ -78,14 +77,14 @@ final class SatelliteTests: XCTestCase {
             XCTFail("Failed to decode: \(error)")
             return
         }
-        
+
         XCTAssertEqual(42, response.count)
-        
+
         if response.data.count != 1 {
             XCTFail("Wrong items count: \(response.data.count) while 1 is expected")
             return
         }
-        
+
         let item = response.data[0]
         XCTAssertNil(item.apogee)
         XCTAssertNil(item.comment)
@@ -100,7 +99,7 @@ final class SatelliteTests: XCTestCase {
         XCTAssertNil(item.period)
         XCTAssertNil(item.rcsSize)
         XCTAssertNil(item.site)
-        
+
         XCTAssertEqual("CIS", item.country)
         XCTAssertTrue(item.current)
         XCTAssertEqual(1, item.file)
@@ -113,7 +112,7 @@ final class SatelliteTests: XCTestCase {
         XCTAssertEqual(0, item.rcsValue)
         XCTAssertEqual("SL-1 R/B", item.name)
     }
-    
+
     func testSatelliteParsing() {
         let text = """
             {
@@ -155,7 +154,7 @@ final class SatelliteTests: XCTestCase {
                 }
             }
         """
-    
+
         var response: SatelliteCatalog
         do {
             let buffer = ByteBuffer(string: text)
@@ -166,14 +165,14 @@ final class SatelliteTests: XCTestCase {
             XCTFail("Failed to decode: \(error)")
             return
         }
-        
+
         XCTAssertEqual(42, response.count)
-        
+
         if response.data.count != 1 {
             XCTFail("Wrong items count: \(response.data.count) while 1 is expected")
             return
         }
-        
+
         let item = response.data[0]
         XCTAssertEqual(938, item.apogee)
         XCTAssertEqual("comment", item.comment)

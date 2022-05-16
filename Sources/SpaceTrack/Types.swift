@@ -39,7 +39,7 @@ public enum DateFormat {
     case DateTime
     /// Date and time with microseconds
     case DatePreciseTime
-    
+
     func hasTime() -> Bool {
         switch self {
         case .Date:
@@ -66,7 +66,7 @@ public enum DateFormat {
 /// allowing to create the instances of `Predicate` and `OrderBy` types.
 public protocol EntityField {
     var rawValue: String { get }
-    
+
     var dateFormat: DateFormat { get }
 }
 
@@ -75,13 +75,13 @@ protocol QueryBuilder {
 }
 
 enum Controller: String {
-    case basicSpaceData    = "basicspacedata"
+    case basicSpaceData = "basicspacedata"
     case expandedSpaceData = "expandedspacedata"
-    case fileShare         = "fileshare"
+    case fileShare = "fileshare"
 }
 
 enum Action: String {
-    case query    = "query"
+    case query
     case modelDef = "modeldef"
 }
 
@@ -98,19 +98,19 @@ enum Format: String {
 
 protocol ResponseDecoder {
     associatedtype Output
-    
+
     func processChunk(buffer: ByteBuffer)
     func decode() throws -> Output
 }
 
 protocol Convertable {
     associatedtype SourceType
-    
+
     init(from data: SourceType)
 }
 
 protocol OptionalResponse {
     static var emptyResult: String { get }
-    
+
     init()
 }

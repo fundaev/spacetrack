@@ -20,7 +20,7 @@
 
 import Foundation
 
-fileprivate func makePattern(for format: DateFormat) -> String {
+private func makePattern(for format: DateFormat) -> String {
     switch format {
     case .Date:
         return "^(\\d{4})-(\\d{2})-(\\d{2})$"
@@ -31,7 +31,7 @@ fileprivate func makePattern(for format: DateFormat) -> String {
     }
 }
 
-fileprivate func extractInt(from text: String, match: NSTextCheckingResult, index: Int) -> Int? {
+private func extractInt(from text: String, match: NSTextCheckingResult, index: Int) -> Int? {
     guard let range = Range(match.range(at: index), in: text) else {
         return nil
     }
@@ -45,24 +45,24 @@ func parseDate(from text: String, for format: DateFormat) -> Date? {
         var components = DateComponents()
         components.timeZone = TimeZone(secondsFromGMT: 0)!
 
-        guard let year  = extractInt(from: text, match: m, index: 1) else { return nil }
+        guard let year = extractInt(from: text, match: m, index: 1) else { return nil }
         guard let month = extractInt(from: text, match: m, index: 2) else { return nil }
-        guard let day   = extractInt(from: text, match: m, index: 3) else { return nil }
+        guard let day = extractInt(from: text, match: m, index: 3) else { return nil }
 
         components.year = year
         components.month = month
         components.day = day
-        
+
         if format.hasTime() {
-            guard let hour   = extractInt(from: text, match: m, index: 4) else { return nil }
+            guard let hour = extractInt(from: text, match: m, index: 4) else { return nil }
             guard let minute = extractInt(from: text, match: m, index: 5) else { return nil }
             guard let second = extractInt(from: text, match: m, index: 6) else { return nil }
-            
+
             components.hour = hour
             components.minute = minute
             components.second = second
         }
-        
+
         if format.hasMicrosecond() {
             guard let microsecond = extractInt(from: text, match: m, index: 7) else {
                 return nil

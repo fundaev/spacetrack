@@ -29,7 +29,7 @@ public struct Satellite: Decodable {
     public var country: String = ""
     public var launch: Date? = nil
     public var site: String? = nil
-    
+
     public var decay: Date? = nil
     public var period: Double? = nil
     public var inclination: Double? = nil
@@ -50,39 +50,39 @@ public struct Satellite: Decodable {
     public var objectId: String = ""
     public var objectName: String = ""
     public var objectNumber: Int32? = nil
-    
+
     public enum Key: String, CodingKey, EntityField {
-        case intldes      = "INTLDES"
-        case noradCatId   = "NORAD_CAT_ID"
-        case objectType   = "OBJECT_TYPE"
-        case name         = "SATNAME"
-        case country      = "COUNTRY"
-        case launch       = "LAUNCH"
-        case site         = "SITE"
-        case decay        = "DECAY"
-        case period       = "PERIOD"
-        case inclination  = "INCLINATION"
-        case apogee       = "APOGEE"
-        case perigee      = "PERIGEE"
-        case comment      = "COMMENT"
-        case commentCode  = "COMMENTCODE"
-        case rcsValue     = "RCSVALUE"
-        case rcsSize      = "RCS_SIZE"
-        case file         = "FILE"
-        case launchYear   = "LAUNCH_YEAR"
-        case launchNum    = "LAUNCH_NUM"
-        case launchPiece  = "LAUNCH_PIECE"
-        case current      = "CURRENT"
-        case objectId     = "OBJECT_ID"
-        case objectName   = "OBJECT_NAME"
+        case intldes = "INTLDES"
+        case noradCatId = "NORAD_CAT_ID"
+        case objectType = "OBJECT_TYPE"
+        case name = "SATNAME"
+        case country = "COUNTRY"
+        case launch = "LAUNCH"
+        case site = "SITE"
+        case decay = "DECAY"
+        case period = "PERIOD"
+        case inclination = "INCLINATION"
+        case apogee = "APOGEE"
+        case perigee = "PERIGEE"
+        case comment = "COMMENT"
+        case commentCode = "COMMENTCODE"
+        case rcsValue = "RCSVALUE"
+        case rcsSize = "RCS_SIZE"
+        case file = "FILE"
+        case launchYear = "LAUNCH_YEAR"
+        case launchNum = "LAUNCH_NUM"
+        case launchPiece = "LAUNCH_PIECE"
+        case current = "CURRENT"
+        case objectId = "OBJECT_ID"
+        case objectName = "OBJECT_NAME"
         case objectNumber = "OBJECT_NUMBER"
-        
+
         public var dateFormat: DateFormat { .Date }
     }
-    
+
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: Key.self)
-        
+
         intldes = try c.decode(String.self, forKey: .intldes)
         noradCatId = try decodeOptional(container: c, forKey: .noradCatId)
         objectType = try c.decodeIfPresent(String.self, forKey: .objectType)
@@ -123,12 +123,12 @@ public typealias SatelliteOrder = Order<Satellite.Key>
 /// Satellite catalog information
 public struct SatelliteCatalog: Convertable, OptionalResponse {
     typealias SourceType = ResponseWithMetadata<Satellite>
-    
+
     /// Total count of satellites satisfied to the filter,
     /// specified in the Client.requestSatelliteCatalog method
     /// - seeAlso: Client
     public let count: Int
-    
+
     /// Satellites list
     public let data: [Satellite]
 
@@ -138,7 +138,7 @@ public struct SatelliteCatalog: Convertable, OptionalResponse {
         count = from.metadata.total
         data = from.data
     }
-    
+
     init() {
         count = 0
         data = []

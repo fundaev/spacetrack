@@ -62,48 +62,48 @@ public struct GeneralPerturbations: Decodable {
     public var tleLine0: String? = nil
     public var tleLine1: String? = nil
     public var tleLine2: String? = nil
-    
+
     public enum Key: String, CodingKey, EntityField {
-        case ccsdsOmmVers       = "CCSDS_OMM_VERS"
-        case comment            = "COMMENT"
-        case creationDate       = "CREATION_DATE"
-        case originator         = "ORIGINATOR"
-        case objectName         = "OBJECT_NAME"
-        case objectId           = "OBJECT_ID"
-        case centerName         = "CENTER_NAME"
-        case refFrame           = "REF_FRAME"
-        case timeSystem         = "TIME_SYSTEM"
-        case meanElementTheory  = "MEAN_ELEMENT_THEORY"
-        case epoch              = "EPOCH"
-        case meanMotion         = "MEAN_MOTION"
-        case eccentricity       = "ECCENTRICITY"
-        case inclination        = "INCLINATION"
-        case raOfAscNode        = "RA_OF_ASC_NODE"
-        case argOfPericenter    = "ARG_OF_PERICENTER"
-        case meanAnomaly        = "MEAN_ANOMALY"
-        case ephemerisType      = "EPHEMERIS_TYPE"
+        case ccsdsOmmVers = "CCSDS_OMM_VERS"
+        case comment = "COMMENT"
+        case creationDate = "CREATION_DATE"
+        case originator = "ORIGINATOR"
+        case objectName = "OBJECT_NAME"
+        case objectId = "OBJECT_ID"
+        case centerName = "CENTER_NAME"
+        case refFrame = "REF_FRAME"
+        case timeSystem = "TIME_SYSTEM"
+        case meanElementTheory = "MEAN_ELEMENT_THEORY"
+        case epoch = "EPOCH"
+        case meanMotion = "MEAN_MOTION"
+        case eccentricity = "ECCENTRICITY"
+        case inclination = "INCLINATION"
+        case raOfAscNode = "RA_OF_ASC_NODE"
+        case argOfPericenter = "ARG_OF_PERICENTER"
+        case meanAnomaly = "MEAN_ANOMALY"
+        case ephemerisType = "EPHEMERIS_TYPE"
         case classificationType = "CLASSIFICATION_TYPE"
-        case noradCatId         = "NORAD_CAT_ID"
-        case elementSetNo       = "ELEMENT_SET_NO"
-        case revAtEoch          = "REV_AT_EPOCH"
-        case bstar              = "BSTAR"
-        case meanMotionDot      = "MEAN_MOTION_DOT"
-        case meanMotionDDot     = "MEAN_MOTION_DDOT"
-        case semimajotAxis      = "SEMIMAJOR_AXIS"
-        case period             = "PERIOD"
-        case apoapsis           = "APOAPSIS"
-        case periapsis          = "PERIAPSIS"
-        case objectType         = "OBJECT_TYPE"
-        case rcsSize            = "RCS_SIZE"
-        case countryCode        = "COUNTRY_CODE"
-        case launchDate         = "LAUNCH_DATE"
-        case site               = "SITE"
-        case decayDate          = "DECAY_DATE"
-        case file               = "FILE"
-        case gpId               = "GP_ID"
-        case tleLine0           = "TLE_LINE0"
-        case tleLine1           = "TLE_LINE1"
-        case tleLine2           = "TLE_LINE2"
+        case noradCatId = "NORAD_CAT_ID"
+        case elementSetNo = "ELEMENT_SET_NO"
+        case revAtEoch = "REV_AT_EPOCH"
+        case bstar = "BSTAR"
+        case meanMotionDot = "MEAN_MOTION_DOT"
+        case meanMotionDDot = "MEAN_MOTION_DDOT"
+        case semimajotAxis = "SEMIMAJOR_AXIS"
+        case period = "PERIOD"
+        case apoapsis = "APOAPSIS"
+        case periapsis = "PERIAPSIS"
+        case objectType = "OBJECT_TYPE"
+        case rcsSize = "RCS_SIZE"
+        case countryCode = "COUNTRY_CODE"
+        case launchDate = "LAUNCH_DATE"
+        case site = "SITE"
+        case decayDate = "DECAY_DATE"
+        case file = "FILE"
+        case gpId = "GP_ID"
+        case tleLine0 = "TLE_LINE0"
+        case tleLine1 = "TLE_LINE1"
+        case tleLine2 = "TLE_LINE2"
 
         public var dateFormat: DateFormat {
             switch self {
@@ -116,10 +116,10 @@ public struct GeneralPerturbations: Decodable {
             }
         }
     }
-    
+
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: Key.self)
-        
+
         ccsdsOmmVers = try c.decode(String.self, forKey: .ccsdsOmmVers)
         comment = try c.decode(String.self, forKey: .comment)
         creationDate = try decodeOptional(container: c, forKey: .creationDate)
@@ -172,12 +172,12 @@ public typealias GPOrder = Order<GeneralPerturbations.Key>
 /// Satellite catalog information
 public struct GeneralPerturbationsList: Convertable, OptionalResponse {
     typealias SourceType = ResponseWithMetadata<GeneralPerturbations>
-    
+
     /// Total count of rows satisfied to the filter,
     /// specified in the Client.requestGPList method
     /// - seeAlso: Client
     public let count: Int
-    
+
     /// General perturbations list
     public let data: [GeneralPerturbations]
 
@@ -187,7 +187,7 @@ public struct GeneralPerturbationsList: Convertable, OptionalResponse {
         count = from.metadata.total
         data = from.data
     }
-    
+
     init() {
         count = 0
         data = []

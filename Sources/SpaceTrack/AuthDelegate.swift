@@ -18,35 +18,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import AsyncHTTPClient
 import Foundation
 import NIOCore
 import NIOHTTP1
-import AsyncHTTPClient
 
 class AuthDelegate: HTTPClientResponseDelegate {
     typealias Response = Result
 
     let decoder: AuthDecoder
-    
+
     init(decoder: AuthDecoder) {
         self.decoder = decoder
     }
-    
+
     func didReceiveHead(task: HTTPClient.Task<Result>, _ head: HTTPResponseHead) -> EventLoopFuture<Void> {
         decoder.processHeader(status: head.status, headers: head.headers)
         return task.eventLoop.makeSucceededFuture(())
     }
-    
+
     func didReceiveBodyPart(task: HTTPClient.Task<Result>, _ buffer: ByteBuffer) -> EventLoopFuture<Void> {
         decoder.processChunk(buffer: buffer)
         return task.eventLoop.makeSucceededFuture(())
     }
-    
-    func didReceiveError(task: HTTPClient.Task<Result>, _ error: Error) {
+
+    func didReceiveError(task _: HTTPClient.Task<Result>, _ error: Error) {
         decoder.processError(error: error)
     }
-    
-    func didFinishRequest(task: HTTPClient.Task<Result>) throws -> Result {
+
+    func didFinishRequest(task _: HTTPClient.Task<Result>) throws -> Result {
         return decoder.decode()
     }
 }

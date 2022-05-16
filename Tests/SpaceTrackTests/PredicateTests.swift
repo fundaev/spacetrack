@@ -18,17 +18,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import XCTest
 import class Foundation.Bundle
 @testable import SpaceTrack
+import XCTest
 
 final class PredicateTests: XCTestCase {
     enum Field: String, EntityField {
-        case id         = "IDENTITY"
-        case name       = "NAME"
-        case value      = "VAL"
-        case date       = "DATE"
-        case dateTime   = "DATETIME"
+        case id = "IDENTITY"
+        case name = "NAME"
+        case value = "VAL"
+        case date = "DATE"
+        case dateTime = "DATETIME"
         case dateTimeMs = "DATETIMEMS"
 
         var dateFormat: DateFormat {
@@ -95,16 +95,17 @@ final class PredicateTests: XCTestCase {
         XCTAssertEqual("/NAME/12,-456,3129", (Field.name.oneOf(values: [12, -456, 3129])).query)
         XCTAssertEqual("/NAME/-0.0012,1.236,-1.5", (Field.name.oneOf(values: [-0.0012, 1.236, -1.5])).query)
         XCTAssertEqual("/NAME/1970-01-01,1970-01-02,null-val", (Field.name.oneOf(values: [
-            Date(timeIntervalSince1970: 0), Date(timeIntervalSince1970: 86400), nil
+            Date(timeIntervalSince1970: 0), Date(timeIntervalSince1970: 86400), nil,
         ])).query)
 
         XCTAssertEqual("/NAME/min--max", (Field.name.between(from: "min", to: "max")).query)
         XCTAssertEqual("/NAME/-12--45", (Field.name.between(from: -12, to: 45)).query)
         XCTAssertEqual("/NAME/-12.456--45.79", (Field.name.between(from: -12.456, to: 45.79)).query)
         XCTAssertEqual("/NAME/1970-01-01--1970-01-02", (Field.name.between(
-            from: Date(timeIntervalSince1970: 0), to: Date(timeIntervalSince1970: 86400))).query)
+            from: Date(timeIntervalSince1970: 0), to: Date(timeIntervalSince1970: 86400)
+        )).query)
     }
-    
+
     func testPredicateSpecialSymbols() {
         XCTAssertEqual("/NAME/NOAA%2017", (Field.name == "NOAA 17").query)
         XCTAssertEqual("/NAME/%3C%3ENOAA%2017", (Field.name != "NOAA 17").query)
@@ -114,16 +115,16 @@ final class PredicateTests: XCTestCase {
                        Field.name.oneOf(values: ["NOAA 17", "ISS/ZARYA", "TE#ST"]).query)
         XCTAssertEqual("/NAME/NOAA%2017--NOAA%2A", Field.name.between(from: "NOAA 17", to: "NOAA*").query)
     }
-    
+
     func testPredicateList() {
         XCTAssertEqual("/IDENTITY/%3E5/NAME/TEST", (Field.id > 5 && Field.name == "TEST").query)
         XCTAssertEqual("/IDENTITY/%3C%3Enull-val/NAME/%3CTEST/VAL/Y",
                        (Field.id != nil && Field.name < "TEST" && Field.value == true).query)
         XCTAssertEqual("/IDENTITY/-20--53/NAME/%3C%3ETEST/VAL/-1.23,2.19,4.57",
                        (Field.id.between(from: -20, to: 53) && Field.name != "TEST" &&
-                        Field.value.oneOf(values: [-1.23, 2.19, 4.57])).query)
+                           Field.value.oneOf(values: [-1.23, 2.19, 4.57])).query)
     }
-    
+
     func testDateFormat() {
         XCTAssertEqual("/DATE/1970-01-01", (Field.date == Date(timeIntervalSince1970: 0)).query)
         XCTAssertEqual("/DATETIME/1970-01-01T00:00:00", (Field.dateTime == Date(timeIntervalSince1970: 0)).query)

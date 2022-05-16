@@ -18,22 +18,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import XCTest
 import class Foundation.Bundle
 @testable import SpaceTrack
+import XCTest
 
 final class OrderTests: XCTestCase {
-
     enum Field: String, EntityField {
-        case id    = "IDENTITY"
-        case name  = "NAME"
+        case id = "IDENTITY"
+        case name = "NAME"
         case value = "VAL"
-        
+
         var dateFormat: DateFormat {
             .Date
         }
     }
-    
+
     typealias FieldOrder = OrderItem<Field>
     typealias OrderField = Order<Field>
 
@@ -49,7 +48,7 @@ final class OrderTests: XCTestCase {
         XCTAssertEqual("/orderby/VAL", OrderField(item: FieldOrder(for: .value, direction: .asc)).query)
         XCTAssertEqual("/orderby/VAL%20desc", OrderField(item: FieldOrder(for: .value, direction: .desc)).query)
     }
-    
+
     func testOrderByAsExtension() {
         XCTAssertEqual("/orderby/NAME", Field.name.asc.query)
         XCTAssertEqual("/orderby/NAME%20desc", Field.name.desc.query)
