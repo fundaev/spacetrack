@@ -118,9 +118,9 @@ There are also such methods as `oneOf` and `between`:
 let filter1 = Satellite.Key.noradCatId.oneOf(values: [25544, 23118, 19186])
 let filter2 = Satellite.Key.launchYear.between(from: 2007, to: 2022)
 ```
-One may construct filter with several conditions using `$$` operator:
+One may construct filter with several conditions using `&&` operator:
 ```swift
-let filter = Satellite.Key.name == "NOAA" && Satellite.Key.launchYear.between(from: 2007, to: 2022)
+let filter = Satellite.Key.name == "NOAA" && Satellite.Key.inclination > 98;
 ```
 
 ### 4.2 Sorting
