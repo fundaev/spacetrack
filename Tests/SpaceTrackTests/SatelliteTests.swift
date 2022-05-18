@@ -141,7 +141,8 @@ final class SatelliteTests: XCTestCase {
                         "RCSVALUE": "0",
                         "RCS_SIZE": "LARGE",
                         "SATNAME": "SL-1 R/B",
-                        "SITE": "TTMTR"
+                        "SITE": "TTMTR",
+                        "DEBUT": "1959-07-09 22:15:15"
                     }
                 ],
                 "request_metadata": {

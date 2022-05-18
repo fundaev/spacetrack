@@ -34,27 +34,38 @@ public enum Result: Equatable, Error {
 /// Date format
 public enum DateFormat {
     /// Date only
-    case Date
-    /// Date and time
-    case DateTime
+    case date
+    /// Date and time with 'T' between date and tme
+    case dateTime
+    /// Date and time with blnk delimiter between date and time
+    case dateTimeWithBlankDelimiter
     /// Date and time with microseconds
-    case DatePreciseTime
+    case datePreciseTime
 
-    func hasTime() -> Bool {
+    var hasTime: Bool {
         switch self {
-        case .Date:
+        case .date:
             return false
-        case .DateTime, .DatePreciseTime:
+        case .dateTime, .dateTimeWithBlankDelimiter, .datePreciseTime:
             return true
         }
     }
 
-    func hasMicrosecond() -> Bool {
+    var hasMicrosecond: Bool {
         switch self {
-        case .Date, .DateTime:
+        case .date, .dateTime, .dateTimeWithBlankDelimiter:
             return false
-        case .DatePreciseTime:
+        case .datePreciseTime:
             return true
+        }
+    }
+
+    var dateTimeDelimiter: String {
+        switch self {
+        case .date, .dateTime, .datePreciseTime:
+            return "T"
+        case .dateTimeWithBlankDelimiter:
+            return " "
         }
     }
 }

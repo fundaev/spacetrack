@@ -108,11 +108,11 @@ public struct GeneralPerturbations: Decodable {
         public var dateFormat: DateFormat {
             switch self {
             case .creationDate:
-                return .DateTime
+                return .dateTime
             case .decayDate, .launchDate:
-                return .Date
+                return .date
             default:
-                return .DatePreciseTime
+                return .datePreciseTime
             }
         }
     }

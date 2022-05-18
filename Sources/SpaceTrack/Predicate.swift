@@ -460,7 +460,7 @@ private extension Date {
             c.day?.toString(width: 2) ?? "<none>",
         ]
         var text = yearItems.joined(separator: "-")
-        if !format.hasTime() {
+        if !format.hasTime {
             return text
         }
 
@@ -469,8 +469,8 @@ private extension Date {
             c.minute?.toString(width: 2) ?? "<none>",
             c.second?.toString(width: 2) ?? "<none>",
         ]
-        text += "T" + dayItems.joined(separator: ":")
-        if !format.hasMicrosecond() {
+        text += format.dateTimeDelimiter + dayItems.joined(separator: ":")
+        if !format.hasMicrosecond {
             return text
         }
 

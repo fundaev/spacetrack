@@ -51,6 +51,8 @@ public struct Satellite: Decodable {
     public var objectName: String = ""
     public var objectNumber: Int32? = nil
 
+    public var debut: Date? = nil
+
     public enum Key: String, CodingKey, EntityField {
         case intldes = "INTLDES"
         case noradCatId = "NORAD_CAT_ID"
@@ -76,8 +78,16 @@ public struct Satellite: Decodable {
         case objectId = "OBJECT_ID"
         case objectName = "OBJECT_NAME"
         case objectNumber = "OBJECT_NUMBER"
+        case debut = "DEBUT"
 
-        public var dateFormat: DateFormat { .Date }
+        public var dateFormat: DateFormat {
+            switch self {
+            case .debut:
+                return .dateTimeWithBlankDelimiter
+            default:
+                return .date
+            }
+        }
     }
 
     public init(from decoder: Decoder) throws {
@@ -111,6 +121,8 @@ public struct Satellite: Decodable {
         objectId = try c.decode(String.self, forKey: .objectId)
         objectName = try c.decode(String.self, forKey: .objectName)
         objectNumber = try decodeOptional(container: c, forKey: .objectNumber)
+
+        debut = try decodeOptional(container: c, forKey: .debut)
     }
 }
 
@@ -149,11 +161,20 @@ class SatelliteDecoder: JsonResponseConverter<SatelliteCatalog.SourceType, Satel
     typealias Output = SatelliteCatalog
 }
 
-class SatelliteCatalogRequest: RequestInfo {
+struct SatelliteCatalogRequest: RequestInfo {
     let controller = Controller.basicSpaceData
     let action = Action.query
     let format = Format.json
     let resource = "satcat"
+    let distinct = true
+    let metadata = true
+}
+
+struct SatelliteCatalogDebutRequest: RequestInfo {
+    let controller = Controller.basicSpaceData
+    let action = Action.query
+    let format = Format.json
+    let resource = "satcat_debut"
     let distinct = true
     let metadata = true
 }

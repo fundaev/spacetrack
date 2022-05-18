@@ -29,7 +29,7 @@ final class OrderTests: XCTestCase {
         case value = "VAL"
 
         var dateFormat: DateFormat {
-            .Date
+            .date
         }
     }
 

@@ -30,15 +30,18 @@ final class PredicateTests: XCTestCase {
         case date = "DATE"
         case dateTime = "DATETIME"
         case dateTimeMs = "DATETIMEMS"
+        case dateTimeBlank = "DATETIMEBLANK"
 
         var dateFormat: DateFormat {
             switch self {
             case .dateTime:
-                return .DateTime
+                return .dateTime
             case .dateTimeMs:
-                return .DatePreciseTime
+                return .datePreciseTime
+            case .dateTimeBlank:
+                return .dateTimeWithBlankDelimiter
             default:
-                return .Date
+                return .date
             }
         }
     }
@@ -130,5 +133,7 @@ final class PredicateTests: XCTestCase {
         XCTAssertEqual("/DATETIME/1970-01-01T00:00:00", (Field.dateTime == Date(timeIntervalSince1970: 0)).query)
         XCTAssertEqual("/DATETIMEMS/1970-01-01T00:00:00.000000",
                        (Field.dateTimeMs == Date(timeIntervalSince1970: 0)).query)
+        XCTAssertEqual("/DATETIMEBLANK/1970-01-01%2000:00:00",
+                       (Field.dateTimeBlank == Date(timeIntervalSince1970: 0)).query)
     }
 }

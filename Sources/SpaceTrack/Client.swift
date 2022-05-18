@@ -128,6 +128,33 @@ public class Client {
         )
     }
 
+    /// Request records added to the Satellite Catalog.
+    ///
+    /// - parameters:
+    ///     - where: SatellitePredicate used to filter the satellites.
+    ///     - order: Use Satellite.Key to construct the required order in the satellite list.
+    ///     - limit: Maximum count of items in the response.
+    ///     - offset: List offset.
+    /// - returns: EventLoopFuture instance with SatelliteCatalog. SatelliteCatalog.count field contains total number
+    ///            of the satellites, satisfied to the specified filter.
+    ///            SatelliteCatalog.data is array of selected satellites.
+    /// - seeAlso:
+    ///     - SatelliteCatalog
+    public func requestSatelliteCatalogDebut(where filter: SatellitePredicate = SatellitePredicate(),
+                                             order: SatelliteOrder = SatelliteOrder(),
+                                             limit: Int? = nil,
+                                             offset: Int? = nil) -> EventLoopFuture<SatelliteCatalog>
+    {
+        return requestData(
+            request: SatelliteCatalogDebutRequest(),
+            handler: DataDelegate(decoder: SatelliteDecoder()),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset
+        )
+    }
+
     /// Request current keplerian elements
     ///
     /// For example, this code requests keplerian elements for satellite with object ID "1982-092AWB":
@@ -249,6 +276,36 @@ public class Client {
         {
             return try await getData(
                 request: SatelliteCatalogRequest(),
+                decoder: SatelliteDecoder(),
+                filter: filter,
+                order: order,
+                limit: limit,
+                offset: offset,
+                timeout: timeout
+            )
+        }
+
+        /// Request records added to the Satellite Catalog.
+        ///
+        /// - parameters:
+        ///     - where: SatellitePredicate used to filter the satellites.
+        ///     - order: Use Satellite.Key to construct the required order in the satellite list.
+        ///     - limit: Maximum count of items in the response.
+        ///     - offset: List offset.
+        ///     - timeout: Request timeout.
+        /// - returns: SatelliteCatalog. SatelliteCatalog.count field contains total number
+        ///            of the satellites, satisfied to the specified filter.
+        ///            SatelliteCatalog.data is array of selected satellites.
+        /// - seeAlso:
+        ///     - SatelliteCatalog
+        func satelliteCatalogDebut(where filter: SatellitePredicate = SatellitePredicate(),
+                                   order: SatelliteOrder = SatelliteOrder(),
+                                   limit: Int? = nil,
+                                   offset: Int? = nil,
+                                   timeout: TimeAmount = .seconds(30)) async throws -> SatelliteCatalog
+        {
+            return try await getData(
+                request: SatelliteCatalogDebutRequest(),
                 decoder: SatelliteDecoder(),
                 filter: filter,
                 order: order,

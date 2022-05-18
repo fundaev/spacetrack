@@ -22,11 +22,13 @@ import Foundation
 
 private func makePattern(for format: DateFormat) -> String {
     switch format {
-    case .Date:
+    case .date:
         return "^(\\d{4})-(\\d{2})-(\\d{2})$"
-    case .DateTime:
+    case .dateTime:
         return "^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})$"
-    case .DatePreciseTime:
+    case .dateTimeWithBlankDelimiter:
+        return "^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2})$"
+    case .datePreciseTime:
         return "^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2}).(\\d{6})$"
     }
 }
@@ -53,7 +55,7 @@ func parseDate(from text: String, for format: DateFormat) -> Date? {
         components.month = month
         components.day = day
 
-        if format.hasTime() {
+        if format.hasTime {
             guard let hour = extractInt(from: text, match: m, index: 4) else { return nil }
             guard let minute = extractInt(from: text, match: m, index: 5) else { return nil }
             guard let second = extractInt(from: text, match: m, index: 6) else { return nil }
@@ -63,7 +65,7 @@ func parseDate(from text: String, for format: DateFormat) -> Date? {
             components.second = second
         }
 
-        if format.hasMicrosecond() {
+        if format.hasMicrosecond {
             guard let microsecond = extractInt(from: text, match: m, index: 7) else {
                 return nil
             }
