@@ -188,6 +188,34 @@ public class Client {
         )
     }
 
+    /// Request historical keplerian elements
+    ///
+    /// - parameters:
+    ///     - where: GPPredicate used to filter the data.
+    ///     - order: Use GeneralPerturbations.Key to construct the required order in the elements.
+    ///     - limit: Maximum count of items in the response
+    ///     - offset: List offset
+    /// - returns: EventLoopFuture instance with GeneralPerturbationsList.
+    ///            GeneralPerturbationsList.count field contains total number
+    ///            of the rows, satisfied to the specified filter.
+    ///            GeneralPerturbationsList.data is array of keplerian elements.
+    /// - seeAlso:
+    ///     - GeneralPerturbations
+    public func requestGeneralPerturbationsHistory(where filter: GPPredicate = GPPredicate(),
+                                                   order: GPOrder = GPOrder(),
+                                                   limit: Int? = nil,
+                                                   offset: Int? = nil) -> EventLoopFuture<GeneralPerturbationsList>
+    {
+        return requestData(
+            request: GPHistoryRequest(),
+            handler: DataDelegate(decoder: GPDecoder()),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset
+        )
+    }
+
     private func requestData<Handler: HTTPClientResponseDelegate>(request: RequestInfo,
                                                                   handler: Handler,
                                                                   filter: QueryBuilder,
@@ -344,6 +372,37 @@ public class Client {
         {
             return try await getData(
                 request: GPRequest(),
+                decoder: GPDecoder(),
+                filter: filter,
+                order: order,
+                limit: limit,
+                offset: offset,
+                timeout: timeout
+            )
+        }
+
+        /// Request historical keplerian elements
+        ///
+        /// - parameters:
+        ///     - where: GPPredicate used to filter the data.
+        ///     - order: Use GeneralPerturbations.Key to construct the required order in the elements.
+        ///     - limit: Maximum count of items in the response.
+        ///     - offset: List offset.
+        ///     - timeout: Request timeout.
+        /// - returns: GeneralPerturbationsList.
+        ///            GeneralPerturbationsList.count field contains total number
+        ///            of the rows, satisfied to the specified filter.
+        ///            GeneralPerturbationsList.data is array of keplerian elements.
+        /// - seeAlso:
+        ///     - GeneralPerturbations
+        func generalPerturbationsHistory(where filter: GPPredicate = GPPredicate(),
+                                         order: GPOrder = GPOrder(),
+                                         limit: Int? = nil,
+                                         offset: Int? = nil,
+                                         timeout: TimeAmount = .seconds(30)) async throws -> GeneralPerturbationsList
+        {
+            return try await getData(
+                request: GPHistoryRequest(),
                 decoder: GPDecoder(),
                 filter: filter,
                 order: order,

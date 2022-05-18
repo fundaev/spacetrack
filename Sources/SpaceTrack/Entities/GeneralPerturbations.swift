@@ -198,11 +198,20 @@ class GPDecoder: JsonResponseConverter<GeneralPerturbationsList.SourceType, Gene
     typealias Output = GeneralPerturbationsList
 }
 
-class GPRequest: RequestInfo {
+struct GPRequest: RequestInfo {
     let controller = Controller.basicSpaceData
     let action = Action.query
     let format = Format.json
     let resource = "gp"
+    let distinct = true
+    let metadata = true
+}
+
+struct GPHistoryRequest: RequestInfo {
+    let controller = Controller.basicSpaceData
+    let action = Action.query
+    let format = Format.json
+    let resource = "gp_history"
     let distinct = true
     let metadata = true
 }
