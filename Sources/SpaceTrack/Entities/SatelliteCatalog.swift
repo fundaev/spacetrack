@@ -136,8 +136,7 @@ public typealias SatelliteOrder = Order<Satellite.Key>
 public struct SatelliteCatalog: Convertable, OptionalResponse {
     typealias SourceType = ResponseWithMetadata<Satellite>
 
-    /// Total count of satellites satisfied to the filter,
-    /// specified in the Client.requestSatelliteCatalog method
+    /// Total count of satellites satisfied to the filter
     /// - seeAlso: Client
     public let count: Int
 

@@ -216,6 +216,35 @@ public class Client {
         )
     }
 
+    /// Request launch sites list
+    ///
+    /// - parameters:
+    ///     - where: LaunchSitePredicate used to filter the data.
+    ///     - order: Use LaunchSite.Key to construct the required order in the elements.
+    ///     - limit: Maximum count of items in the response.
+    ///     - offset: List offset.
+    ///     - timeout: Request timeout.
+    /// - returns: EventLoopFuture instance with LaunchSiteList.
+    ///            LaunchSiteList.count field contains total number
+    ///            of the rows, satisfied to the specified filter.
+    ///            LaunchSiteList.data is array of launch sites.
+    /// - seeAlso:
+    ///     - LaunchSite
+    func requestLaunchSiteList(where filter: LaunchSitePredicate = LaunchSitePredicate(),
+                               order: LaunchSiteOrder = LaunchSiteOrder(),
+                               limit: Int? = nil,
+                               offset: Int? = nil) -> EventLoopFuture<LaunchSiteList>
+    {
+        return requestData(
+            request: LaunchSiteRequest(),
+            handler: DataDelegate(decoder: LaunchSiteDecoder()),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset
+        )
+    }
+
     private func requestData<Handler: HTTPClientResponseDelegate>(request: RequestInfo,
                                                                   handler: Handler,
                                                                   filter: QueryBuilder,
@@ -404,6 +433,37 @@ public class Client {
             return try await getData(
                 request: GPHistoryRequest(),
                 decoder: GPDecoder(),
+                filter: filter,
+                order: order,
+                limit: limit,
+                offset: offset,
+                timeout: timeout
+            )
+        }
+
+        /// Request launch sites list
+        ///
+        /// - parameters:
+        ///     - where: LaunchSitePredicate used to filter the data.
+        ///     - order: Use LaunchSite.Key to construct the required order in the elements.
+        ///     - limit: Maximum count of items in the response.
+        ///     - offset: List offset.
+        ///     - timeout: Request timeout.
+        /// - returns: LaunchSiteList.
+        ///            LaunchSiteList.count field contains total number
+        ///            of the rows, satisfied to the specified filter.
+        ///            LaunchSiteList.data is array of launch sites.
+        /// - seeAlso:
+        ///     - LaunchSite
+        func launchSiteList(where filter: LaunchSitePredicate = LaunchSitePredicate(),
+                            order: LaunchSiteOrder = LaunchSiteOrder(),
+                            limit: Int? = nil,
+                            offset: Int? = nil,
+                            timeout: TimeAmount = .seconds(30)) async throws -> LaunchSiteList
+        {
+            return try await getData(
+                request: LaunchSiteRequest(),
+                decoder: LaunchSiteDecoder(),
                 filter: filter,
                 order: order,
                 limit: limit,

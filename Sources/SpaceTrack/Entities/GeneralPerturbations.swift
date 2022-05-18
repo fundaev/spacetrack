@@ -173,8 +173,7 @@ public typealias GPOrder = Order<GeneralPerturbations.Key>
 public struct GeneralPerturbationsList: Convertable, OptionalResponse {
     typealias SourceType = ResponseWithMetadata<GeneralPerturbations>
 
-    /// Total count of rows satisfied to the filter,
-    /// specified in the Client.requestGPList method
+    /// Total count of rows satisfied to the filter
     /// - seeAlso: Client
     public let count: Int
 
