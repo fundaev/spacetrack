@@ -67,7 +67,7 @@ public class Client {
         return session.hasCookies
     }
 
-    /// Authorize client
+    /// Authorize client.
     ///
     /// - parameters:
     ///     - username: e-mail address used as a user name at www.space-track.org
@@ -83,7 +83,7 @@ public class Client {
         return task.futureResult
     }
 
-    /// Request the list of available satellites without current information about their orbital elements
+    /// Request the list of available satellites without current information about their orbital elements.
     ///
     /// For example, this code requests first 10 satellites, starting from 4th, with names containing "ISS" word
     /// and sorted by name:
@@ -155,7 +155,34 @@ public class Client {
         )
     }
 
-    /// Request current keplerian elements
+    /// Request changes in the satellite catalog.
+    ///
+    /// - parameters:
+    ///     - where: SatelliteChangePredicate used to filter the changes.
+    ///     - order: Use SatelliteChange.Key to construct the required order in the changes list.
+    ///     - limit: Maximum count of items in the response.
+    ///     - offset: List offset.
+    /// - returns: EventLoopFuture instance with SatelliteChangeList. SatelliteCatalog.count field contains total number
+    ///            of the rows, satisfied to the specified filter.
+    ///            SatelliteChangeList.data is array of rows.
+    /// - seeAlso:
+    ///     - SatelliteChangeList
+    public func requestSatelliteChangeList(where filter: SatelliteChangePredicate = SatelliteChangePredicate(),
+                                           order: SatelliteChangeOrder = SatelliteChangeOrder(),
+                                           limit: Int? = nil,
+                                           offset: Int? = nil) -> EventLoopFuture<SatelliteChangeList>
+    {
+        return requestData(
+            request: SatelliteChangeRequest(),
+            handler: DataDelegate(decoder: SatelliteChangeDecoder()),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset
+        )
+    }
+
+    /// Request current keplerian elements.
     ///
     /// For example, this code requests keplerian elements for satellite with object ID "1982-092AWB":
     /// ```swift
@@ -188,7 +215,7 @@ public class Client {
         )
     }
 
-    /// Request historical keplerian elements
+    /// Request historical keplerian elements.
     ///
     /// - parameters:
     ///     - where: GPPredicate used to filter the data.
@@ -216,7 +243,7 @@ public class Client {
         )
     }
 
-    /// Request launch sites list
+    /// Request launch sites list.
     ///
     /// - parameters:
     ///     - where: LaunchSitePredicate used to filter the data.
@@ -273,7 +300,7 @@ public class Client {
 #if compiler(>=5.5.2) && canImport(_Concurrency)
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public extension Client {
-        /// Authorize client
+        /// Authorize client.
         ///
         /// - parameters:
         ///     - username: e-mail address used as a user name at www.space-track.org
@@ -294,7 +321,7 @@ public class Client {
             return authDecoder.decode()
         }
 
-        /// Request the list of available satellites without current information about their orbital elements
+        /// Request the list of available satellites without current information about their orbital elements.
         ///
         /// For example, this code requests first 10 satellites, starting from 4th, with names containing "ISS" word
         /// and sorted by name:
@@ -372,7 +399,36 @@ public class Client {
             )
         }
 
-        /// Request current keplerian elements
+        /// Request changes in the satellite catalog.
+        ///
+        /// - parameters:
+        ///     - where: SatelliteChangePredicate used to filter the changes.
+        ///     - order: Use SatelliteChange.Key to construct the required order in the changes list.
+        ///     - limit: Maximum count of items in the response.
+        ///     - offset: List offset.
+        /// - returns: EventLoopFuture instance with SatelliteChangeList. SatelliteCatalog.count field contains total number
+        ///            of the rows, satisfied to the specified filter.
+        ///            SatelliteChangeList.data is array of rows.
+        /// - seeAlso:
+        ///     - SatelliteChangeList
+        func satelliteChangeList(where filter: SatelliteChangePredicate = SatelliteChangePredicate(),
+                                 order: SatelliteChangeOrder = SatelliteChangeOrder(),
+                                 limit: Int? = nil,
+                                 offset: Int? = nil,
+                                 timeout: TimeAmount = .seconds(30)) async throws -> SatelliteChangeList
+        {
+            return try await getData(
+                request: SatelliteChangeRequest(),
+                decoder: SatelliteChangeDecoder(),
+                filter: filter,
+                order: order,
+                limit: limit,
+                offset: offset,
+                timeout: timeout
+            )
+        }
+
+        /// Request current keplerian elements.
         ///
         /// For example, this code requests keplerian elements for satellite with object ID "1982-092AWB":
         /// ```swift
@@ -410,7 +466,7 @@ public class Client {
             )
         }
 
-        /// Request historical keplerian elements
+        /// Request historical keplerian elements.
         ///
         /// - parameters:
         ///     - where: GPPredicate used to filter the data.
@@ -441,7 +497,7 @@ public class Client {
             )
         }
 
-        /// Request launch sites list
+        /// Request launch sites list.
         ///
         /// - parameters:
         ///     - where: LaunchSitePredicate used to filter the data.
