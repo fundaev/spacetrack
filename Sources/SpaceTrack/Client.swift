@@ -257,14 +257,43 @@ public class Client {
     ///            LaunchSiteList.data is array of launch sites.
     /// - seeAlso:
     ///     - LaunchSite
-    func requestLaunchSiteList(where filter: LaunchSitePredicate = LaunchSitePredicate(),
-                               order: LaunchSiteOrder = LaunchSiteOrder(),
-                               limit: Int? = nil,
-                               offset: Int? = nil) -> EventLoopFuture<LaunchSiteList>
+    public func requestLaunchSiteList(where filter: LaunchSitePredicate = LaunchSitePredicate(),
+                                      order: LaunchSiteOrder = LaunchSiteOrder(),
+                                      limit: Int? = nil,
+                                      offset: Int? = nil) -> EventLoopFuture<LaunchSiteList>
     {
         return requestData(
             request: LaunchSiteRequest(),
             handler: DataDelegate(decoder: LaunchSiteDecoder()),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset
+        )
+    }
+
+    /// Request Tracking and Impact Prediction Message list.
+    ///
+    /// - parameters:
+    ///     - where: TIPMessagePredicate used to filter the data.
+    ///     - order: Use TIPMessage.Key to construct the required order in the elements.
+    ///     - limit: Maximum count of items in the response.
+    ///     - offset: List offset.
+    ///     - timeout: Request timeout.
+    /// - returns: EventLoopFuture instance with TIPMessageList.
+    ///            TIPMessageList.count field contains total number
+    ///            of the rows, satisfied to the specified filter.
+    ///            TIPMessageList.data is array of TIP messages.
+    /// - seeAlso:
+    ///     - TIPMessage
+    public func requestTIPMessageList(where filter: TIPMessagePredicate = TIPMessagePredicate(),
+                                      order: TIPMessageOrder = TIPMessageOrder(),
+                                      limit: Int? = nil,
+                                      offset: Int? = nil) -> EventLoopFuture<TIPMessageList>
+    {
+        return requestData(
+            request: TIPMessageRequest(),
+            handler: DataDelegate(decoder: TIPMessageDecoder()),
             filter: filter,
             order: order,
             limit: limit,
@@ -520,6 +549,37 @@ public class Client {
             return try await getData(
                 request: LaunchSiteRequest(),
                 decoder: LaunchSiteDecoder(),
+                filter: filter,
+                order: order,
+                limit: limit,
+                offset: offset,
+                timeout: timeout
+            )
+        }
+
+        /// Request Tracking and Impact Prediction Message list.
+        ///
+        /// - parameters:
+        ///     - where: TIPMessagePredicate used to filter the data.
+        ///     - order: Use TIPMessage.Key to construct the required order in the elements.
+        ///     - limit: Maximum count of items in the response.
+        ///     - offset: List offset.
+        ///     - timeout: Request timeout.
+        /// - returns: TIPMessageList.
+        ///            TIPMessageList.count field contains total number
+        ///            of the rows, satisfied to the specified filter.
+        ///            TIPMessageList.data is array of TIP messages.
+        /// - seeAlso:
+        ///     - TIPMessage
+        func TIPMessageList(where filter: TIPMessagePredicate = TIPMessagePredicate(),
+                            order: TIPMessageOrder = TIPMessageOrder(),
+                            limit: Int? = nil,
+                            offset: Int? = nil,
+                            timeout: TimeAmount = .seconds(30)) async throws -> TIPMessageList
+        {
+            return try await getData(
+                request: TIPMessageRequest(),
+                decoder: TIPMessageDecoder(),
                 filter: filter,
                 order: order,
                 limit: limit,

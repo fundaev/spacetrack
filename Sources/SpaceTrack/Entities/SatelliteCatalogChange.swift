@@ -111,7 +111,8 @@ public struct SatelliteChangeList: Convertable, OptionalResponse {
 }
 
 class SatelliteChangeDecoder: JsonResponseConverter<SatelliteChangeList.SourceType, SatelliteChangeList>,
-                              ResponseDecoder {
+    ResponseDecoder
+{
     typealias Output = SatelliteChangeList
 }
 
