@@ -330,6 +330,36 @@ public class Client {
         )
     }
 
+    /// Request conjunction data messages list.
+    ///
+    /// - parameters:
+    ///     - where: ConjunctionDataMessagePredicate used to filter the data.
+    ///     - order: Use ConjunctionDataMessage.Key to construct the required order in the elements.
+    ///     - limit: Maximum count of items in the response.
+    ///     - offset: List offset.
+    ///     - timeout: Request timeout.
+    /// - returns: EventLoopFuture instance with ConjunctionDataMessageList.
+    ///            ConjunctionDataMessageList.count field contains total number
+    ///            of the rows, satisfied to the specified filter.
+    ///            ConjunctionDataMessageList.data is array of conjunction data messages.
+    /// - seeAlso:
+    ///     - ConjunctionDataMessage
+    public func requestConjunctionDataMessageList(
+        where filter: ConjunctionDataMessagePredicate = ConjunctionDataMessagePredicate(),
+        order: ConjunctionDataMessageOrder = ConjunctionDataMessageOrder(),
+        limit: Int? = nil,
+        offset: Int? = nil
+    ) -> EventLoopFuture<ConjunctionDataMessageList> {
+        return requestData(
+            request: ConjunctionDataMessageRequest(),
+            handler: DataDelegate(decoder: ConjunctionDataMessageDecoder()),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset
+        )
+    }
+
     private func requestData<Handler: HTTPClientResponseDelegate>(request: RequestInfo,
                                                                   handler: Handler,
                                                                   filter: QueryBuilder,
@@ -640,6 +670,38 @@ public class Client {
             return try await getData(
                 request: DecayRequest(),
                 decoder: DecayDecoder(),
+                filter: filter,
+                order: order,
+                limit: limit,
+                offset: offset,
+                timeout: timeout
+            )
+        }
+
+        /// Request conjunction data messages list.
+        ///
+        /// - parameters:
+        ///     - where: ConjunctionDataMessagePredicate used to filter the data.
+        ///     - order: Use ConjunctionDataMessage.Key to construct the required order in the elements.
+        ///     - limit: Maximum count of items in the response.
+        ///     - offset: List offset.
+        ///     - timeout: Request timeout.
+        /// - returns: ConjunctionDataMessageList.
+        ///            ConjunctionDataMessageList.count field contains total number
+        ///            of the rows, satisfied to the specified filter.
+        ///            ConjunctionDataMessageList.data is array of conjunction data messages.
+        /// - seeAlso:
+        ///     - ConjunctionDataMessage
+        func conjunctionDataMessageList(
+            where filter: ConjunctionDataMessagePredicate = ConjunctionDataMessagePredicate(),
+            order: ConjunctionDataMessageOrder = ConjunctionDataMessageOrder(),
+            limit: Int? = nil,
+            offset: Int? = nil,
+            timeout: TimeAmount = .seconds(30)
+        ) async throws -> ConjunctionDataMessageList {
+            return try await getData(
+                request: ConjunctionDataMessageRequest(),
+                decoder: ConjunctionDataMessageDecoder(),
                 filter: filter,
                 order: order,
                 limit: limit,

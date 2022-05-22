@@ -37,16 +37,18 @@ public enum DateFormat {
     case date
     /// Date and time with 'T' between date and tme
     case dateTime
-    /// Date and time with blnk delimiter between date and time
+    /// Date and time with blank delimiter between date and time
     case dateTimeWithBlankDelimiter
     /// Date and time with microseconds
     case datePreciseTime
+    /// Date and time with microseconds and blank delimiter between date and time
+    case datePreciseTimeWithBlankDelimiter
 
     var hasTime: Bool {
         switch self {
         case .date:
             return false
-        case .dateTime, .dateTimeWithBlankDelimiter, .datePreciseTime:
+        case .dateTime, .dateTimeWithBlankDelimiter, .datePreciseTime, .datePreciseTimeWithBlankDelimiter:
             return true
         }
     }
@@ -55,7 +57,7 @@ public enum DateFormat {
         switch self {
         case .date, .dateTime, .dateTimeWithBlankDelimiter:
             return false
-        case .datePreciseTime:
+        case .datePreciseTime, .datePreciseTimeWithBlankDelimiter:
             return true
         }
     }
@@ -64,7 +66,7 @@ public enum DateFormat {
         switch self {
         case .date, .dateTime, .datePreciseTime:
             return "T"
-        case .dateTimeWithBlankDelimiter:
+        case .dateTimeWithBlankDelimiter, .datePreciseTimeWithBlankDelimiter:
             return " "
         }
     }
