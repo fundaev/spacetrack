@@ -301,6 +301,35 @@ public class Client {
         )
     }
 
+    /// Request Predicted and historical decay information.
+    ///
+    /// - parameters:
+    ///     - where: DecayPredicate used to filter the data.
+    ///     - order: Use Decay.Key to construct the required order in the elements.
+    ///     - limit: Maximum count of items in the response.
+    ///     - offset: List offset.
+    ///     - timeout: Request timeout.
+    /// - returns: EventLoopFuture instance with DecayList.
+    ///            DecayList.count field contains total number
+    ///            of the rows, satisfied to the specified filter.
+    ///            DecayList.data is array of decay messages.
+    /// - seeAlso:
+    ///     - Decay
+    public func requestDecay(where filter: DecayPredicate = DecayPredicate(),
+                             order: DecayOrder = DecayOrder(),
+                             limit: Int? = nil,
+                             offset: Int? = nil) -> EventLoopFuture<DecayList>
+    {
+        return requestData(
+            request: DecayRequest(),
+            handler: DataDelegate(decoder: DecayDecoder()),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset
+        )
+    }
+
     private func requestData<Handler: HTTPClientResponseDelegate>(request: RequestInfo,
                                                                   handler: Handler,
                                                                   filter: QueryBuilder,
@@ -580,6 +609,37 @@ public class Client {
             return try await getData(
                 request: TIPMessageRequest(),
                 decoder: TIPMessageDecoder(),
+                filter: filter,
+                order: order,
+                limit: limit,
+                offset: offset,
+                timeout: timeout
+            )
+        }
+
+        /// Request Predicted and historical decay information.
+        ///
+        /// - parameters:
+        ///     - where: DecayPredicate used to filter the data.
+        ///     - order: Use Decay.Key to construct the required order in the elements.
+        ///     - limit: Maximum count of items in the response.
+        ///     - offset: List offset.
+        ///     - timeout: Request timeout.
+        /// - returns: DecayList.
+        ///            DecayList.count field contains total number
+        ///            of the rows, satisfied to the specified filter.
+        ///            DecayList.data is array of decay messages.
+        /// - seeAlso:
+        ///     - Decay
+        func decay(where filter: DecayPredicate = DecayPredicate(),
+                   order: DecayOrder = DecayOrder(),
+                   limit: Int? = nil,
+                   offset: Int? = nil,
+                   timeout: TimeAmount = .seconds(30)) async throws -> DecayList
+        {
+            return try await getData(
+                request: DecayRequest(),
+                decoder: DecayDecoder(),
                 filter: filter,
                 order: order,
                 limit: limit,

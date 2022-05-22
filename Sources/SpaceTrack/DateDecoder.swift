@@ -27,7 +27,7 @@ private func makePattern(for format: DateFormat) -> String {
     case .dateTime:
         return "^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})$"
     case .dateTimeWithBlankDelimiter:
-        return "^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2})$"
+        return "^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{1,2}):(\\d{2}):(\\d{2})$"
     case .datePreciseTime:
         return "^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2}).(\\d{6})$"
     }

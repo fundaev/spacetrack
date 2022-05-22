@@ -95,7 +95,7 @@ public typealias TIPMessageOrder = Order<TIPMessage.Key>
 public struct TIPMessageList: Convertable, OptionalResponse {
     typealias SourceType = ResponseWithMetadata<TIPMessage>
 
-    /// Total count of changes satisfied to the filter
+    /// Total count of messages satisfied to the filter
     /// - seeAlso: Client
     public let count: Int
 
