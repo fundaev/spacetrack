@@ -360,6 +360,35 @@ public class Client {
         )
     }
 
+    /// Request accounting of man-made objects that have been or are in orbit.
+    ///
+    /// - parameters:
+    ///     - where: BoxscorePredicate used to filter the data.
+    ///     - order: Use Boxscore.Key to construct the required order in the elements.
+    ///     - limit: Maximum count of items in the response.
+    ///     - offset: List offset.
+    ///     - timeout: Request timeout.
+    /// - returns: EventLoopFuture instance with BoxscoreList.
+    ///            BoxscoreList.count field contains total number
+    ///            of the rows, satisfied to the specified filter.
+    ///            BoxscoreList.data is array of boxscores.
+    /// - seeAlso:
+    ///     - Boxscore
+    public func requestBoxscore(where filter: BoxscorePredicate = BoxscorePredicate(),
+                                order: BoxscoreOrder = BoxscoreOrder(),
+                                limit: Int? = nil,
+                                offset: Int? = nil) -> EventLoopFuture<BoxscoreList>
+    {
+        return requestData(
+            request: BoxscoreRequest(),
+            handler: DataDelegate(decoder: BoxscoreDecoder()),
+            filter: filter,
+            order: order,
+            limit: limit,
+            offset: offset
+        )
+    }
+
     private func requestData<Handler: HTTPClientResponseDelegate>(request: RequestInfo,
                                                                   handler: Handler,
                                                                   filter: QueryBuilder,
@@ -702,6 +731,37 @@ public class Client {
             return try await getData(
                 request: ConjunctionDataMessageRequest(),
                 decoder: ConjunctionDataMessageDecoder(),
+                filter: filter,
+                order: order,
+                limit: limit,
+                offset: offset,
+                timeout: timeout
+            )
+        }
+
+        /// Request accounting of man-made objects that have been or are in orbit.
+        ///
+        /// - parameters:
+        ///     - where: BoxscorePredicate used to filter the data.
+        ///     - order: Use Boxscore.Key to construct the required order in the elements.
+        ///     - limit: Maximum count of items in the response.
+        ///     - offset: List offset.
+        ///     - timeout: Request timeout.
+        /// - returns: EventLoopFuture instance with BoxscoreList.
+        ///            BoxscoreList.count field contains total number
+        ///            of the rows, satisfied to the specified filter.
+        ///            BoxscoreList.data is array of boxscores.
+        /// - seeAlso:
+        ///     - Boxscore
+        func boxscore(where filter: BoxscorePredicate = BoxscorePredicate(),
+                      order: BoxscoreOrder = BoxscoreOrder(),
+                      limit: Int? = nil,
+                      offset: Int? = nil,
+                      timeout: TimeAmount = .seconds(30)) async throws -> BoxscoreList
+        {
+            return try await getData(
+                request: BoxscoreRequest(),
+                decoder: BoxscoreDecoder(),
                 filter: filter,
                 order: order,
                 limit: limit,
