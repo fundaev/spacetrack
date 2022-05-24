@@ -15,6 +15,8 @@ API.
     - [Sorting](#sorting)
 - [Supported entities](#supported-entities)
     - [Satellite catalog](#satellite-catalog)
+    - [Satellite catalog debut](#satellite-catalog-debut)
+    - [Satellite catalog changes](#satellite-catalog-changes)
     - [General perturbations](#general-perturbations)
 
 ## Installation
