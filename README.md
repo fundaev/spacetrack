@@ -136,7 +136,7 @@ You may sort the result by several fields using `&` operator:
 let order = Satellite.Key.name.asc & Satellite.Key.launchYear.desc
 ```
 
-## Supported entities
+## Supported requests
 
 ### Satellite catalog
 
@@ -171,18 +171,113 @@ print("\(response.data.count) item(s) from \(response.count)")
 Use `requestSatelliteCatalog` method if you don't want to deal with Swift Concurrency.
 
 ```swift
-let satFuture = client.requestSatelliteCatalog(
+let future = client.requestSatelliteCatalog(
     where: Satellite.Key.name == "~~NOAA~~" && Satellite.Key.launchYear > 2000,
     order: Satellite.Key.name.asc,
     limit: 10,
     offset: 100
 )
-let result = try satFuture.wait()
-for sat in result.data {
-    print("\(sat.name)")
+let response = try future.wait()
+for satellite in response.data {
+    print("\(satellite.name)")
 }
 print("-------------------------------")
-print("\(result.data.count) item(s) from \(result.count)")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+</p>
+</details>
+
+### Satellite catalog debut
+
+To get new records added to the Satellite Catalog use `satelliteCatalogDebut` method. It operates by the same entity, used for satellite catalog, but the `Satellite.debut` field contains the date and time when the object was first added into the catalog.
+
+Let's get the last 10 objects, added into the catalog during the last 7 days:
+```swift
+let response = try await client.satelliteCatalogDebut(
+    where: Satellite.Key.debut > Date(timeIntervalSinceNow: -7 * 86400),
+    order: Satellite.Key.debut.desc & Satellite.Key.name.asc,
+    limit: 10
+)
+
+for satellite in response.data {
+    print("\(satellite.name)")
+}
+print("-------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+<details>
+<summary>
+<p>
+
+#### With EventLoopFuture
+
+</p>
+</summary>
+<p>
+Use `requestSatelliteCatalogDebut` method if you don't want to deal with Swift Concurrency.
+
+```swift
+let future = client.requestSatelliteCatalogDebut(
+    where: Satellite.Key.debut > Date(timeIntervalSinceNow: -7 * 86400),
+    order: Satellite.Key.debut.desc & Satellite.Key.name.asc,
+    limit: 10
+)
+let response = try future.wait()
+for satellite in response.data {
+    print("\(satellite.name)")
+}
+print("-------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+</p>
+</details>
+
+### Satellite catalog changes
+
+To get the list of the satellites, changed in the catalog during about the last 60 days, use `satelliteCatalogChanges` method:
+```swift
+let satcatChanges = try await client.satelliteCatalogChanges(
+    where: SatelliteChange.Key.previousDecay == nil && SatelliteChange.Key.currentDecay != nil,
+    order: SatelliteChange.Key.changeMade.desc,
+    limit: 10
+)
+let dateFormatter = DateFormatter()
+dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:SS"
+for change in satcatChanges.data {
+    print("\(change.currentName): decay: NULL -> \(dateFormatter.string(from: change.currentDecay!))")
+}
+print("-------------------------------------------------------------------")
+print("\(satcatChanges.data.count) item(s) from \(satcatChanges.count)")
+```
+
+<details>
+<summary>
+<p>
+
+#### With EventLoopFuture
+
+</p>
+</summary>
+<p>
+Use `requestSatelliteCatalogChanges` method if you don't want to deal with Swift Concurrency.
+
+```swift
+let future = client.requestSatelliteCatalogChanges(
+    where: SatelliteChange.Key.previousDecay == nil && SatelliteChange.Key.currentDecay != nil,
+    order: SatelliteChange.Key.changeMade.desc,
+    limit: 10
+)
+let response = try future.wait()
+let dateFormatter = DateFormatter()
+dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:SS"
+for change in satcatChanges.data {
+    print("\(change.currentName): decay: NULL -> \(dateFormatter.string(from: change.currentDecay!))")
+}
+print("-------------------------------------------------------------------")
+print("\(satcatChanges.data.count) item(s) from \(satcatChanges.count)")
 ```
 
 </p>
@@ -218,18 +313,18 @@ print("\(response.data.count) item(s) from \(response.count)")
 Use `requestGeneralPerturbation` method if you don't want to deal with Swift Concurrency.
 
 ```swift
-let gpFuture = client.requestGeneralPerturbations(
+let future = client.requestGeneralPerturbations(
     where: GeneralPerturbations.Key.noradCatId == 25544,
     order: GeneralPerturbations.Key.noradCatId.asc,
     limit: 10,
     offset: 0
 )
-let result = try gpFuture.wait()
-for gp in result.data {
+let response = try future.wait()
+for gp in response.data {
     print("\(gp.semimajorAxis)")
 }
 print("-------------------------------")
-print("\(result.data.count) item(s) from \(result.count)")
+print("\(response.data.count) item(s) from \(response.count)")
 ```
 
 </p>
