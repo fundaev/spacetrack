@@ -1,5 +1,6 @@
 ![Swift](https://img.shields.io/badge/Swift-%3E%3D%205.4-orange)
-![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20MacOS%20%7C%20tvOS%20%7C%20watchOS-blue)
+![Platform](https://img.shields.io/badge/Platform-MacOS%20%20Linux%20%20iOS%20%20watchOS%20%20tvOS-blue)
+
 [![Swift](https://github.com/fundaev/spacetrack/actions/workflows/swift.yml/badge.svg)](https://github.com/fundaev/spacetrack/actions/workflows/swift.yml)
 
 # SpaceTrack
@@ -18,6 +19,7 @@ API.
     - [Satellite catalog debut](#satellite-catalog-debut)
     - [Satellite catalog changes](#satellite-catalog-changes)
     - [General perturbations](#general-perturbations)
+    - [General perturbations history](#general-perturbations-history)
 
 ## Installation
 
@@ -316,7 +318,7 @@ print("\(response.data.count) item(s) from \(response.count)")
 </p>
 </summary>
 <p>
-Use `requestGeneralPerturbation` method if you don't want to deal with Swift Concurrency.
+Use `requestGeneralPerturbations` method if you don't want to deal with Swift Concurrency.
 
 ```swift
 let future = client.requestGeneralPerturbations(
@@ -328,6 +330,53 @@ let future = client.requestGeneralPerturbations(
 let response = try future.wait()
 for gp in response.data {
     print("\(gp.semimajorAxis)")
+}
+print("-------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+</p>
+</details>
+
+### General perturbations history
+
+To get keplerian elements from historical data use `generalPerturbationsHistory` method. It operates by `GeneralPerturbations` entity.
+
+```swift
+let response = try await client.generalPerturbationsHistory(
+    where: GeneralPerturbations.Key.noradCatId == 25544,
+    order: GeneralPerturbations.Key.noradCatId.asc,
+    limit: 10
+)
+for gp in response.data {
+    print(gp.tleLine1 ?? "-")
+    print(gp.tleLine2 ?? "-")
+}
+print("-------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+<details>
+<summary>
+<p>
+
+#### With EventLoopFuture
+
+</p>
+</summary>
+<p>
+Use `requestGeneralPerturbationsHistory` method if you don't want to deal with Swift Concurrency.
+
+```swift
+let future = client.requestGeneralPerturbationsHistory(
+    where: GeneralPerturbations.Key.noradCatId == 25544,
+    order: GeneralPerturbations.Key.noradCatId.asc,
+    limit: 10
+)
+let response = try future.wait()
+for gp in response.data {
+    print(gp.tleLine1 ?? "-")
+    print(gp.tleLine2 ?? "-")
 }
 print("-------------------------------")
 print("\(response.data.count) item(s) from \(response.count)")
