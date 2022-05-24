@@ -113,11 +113,12 @@ public class Client {
     ///            SatelliteCatalog.data is array of selected satellites.
     /// - seeAlso:
     ///     - SatelliteCatalog
-    public func requestSatelliteCatalog(where filter: SatellitePredicate = SatellitePredicate(),
-                                        order: SatelliteOrder = SatelliteOrder(),
-                                        limit: Int? = nil,
-                                        offset: Int? = nil) -> EventLoopFuture<SatelliteCatalog>
-    {
+    public func requestSatelliteCatalog(
+        where filter: SatellitePredicate = SatellitePredicate(),
+        order: SatelliteOrder = SatelliteOrder(),
+        limit: Int? = nil,
+        offset: Int? = nil
+    ) -> EventLoopFuture<SatelliteCatalog> {
         return requestData(
             request: SatelliteCatalogRequest(),
             handler: DataDelegate(decoder: SatelliteDecoder()),
@@ -140,11 +141,12 @@ public class Client {
     ///            SatelliteCatalog.data is array of selected satellites.
     /// - seeAlso:
     ///     - SatelliteCatalog
-    public func requestSatelliteCatalogDebut(where filter: SatellitePredicate = SatellitePredicate(),
-                                             order: SatelliteOrder = SatelliteOrder(),
-                                             limit: Int? = nil,
-                                             offset: Int? = nil) -> EventLoopFuture<SatelliteCatalog>
-    {
+    public func requestSatelliteCatalogDebut(
+        where filter: SatellitePredicate = SatellitePredicate(),
+        order: SatelliteOrder = SatelliteOrder(),
+        limit: Int? = nil,
+        offset: Int? = nil
+    ) -> EventLoopFuture<SatelliteCatalog> {
         return requestData(
             request: SatelliteCatalogDebutRequest(),
             handler: DataDelegate(decoder: SatelliteDecoder()),
@@ -167,11 +169,12 @@ public class Client {
     ///            SatelliteChangeList.data is array of rows.
     /// - seeAlso:
     ///     - SatelliteChangeList
-    public func requestSatelliteChangeList(where filter: SatelliteChangePredicate = SatelliteChangePredicate(),
-                                           order: SatelliteChangeOrder = SatelliteChangeOrder(),
-                                           limit: Int? = nil,
-                                           offset: Int? = nil) -> EventLoopFuture<SatelliteChangeList>
-    {
+    public func requestSatelliteCatalogChanges(
+        where filter: SatelliteChangePredicate = SatelliteChangePredicate(),
+        order: SatelliteChangeOrder = SatelliteChangeOrder(),
+        limit: Int? = nil,
+        offset: Int? = nil
+    ) -> EventLoopFuture<SatelliteChangeList> {
         return requestData(
             request: SatelliteChangeRequest(),
             handler: DataDelegate(decoder: SatelliteChangeDecoder()),
@@ -200,11 +203,12 @@ public class Client {
     ///            GeneralPerturbationsList.data is array of keplerian elements.
     /// - seeAlso:
     ///     - GeneralPerturbations
-    public func requestGeneralPerturbations(where filter: GPPredicate = GPPredicate(),
-                                            order: GPOrder = GPOrder(),
-                                            limit: Int? = nil,
-                                            offset: Int? = nil) -> EventLoopFuture<GeneralPerturbationsList>
-    {
+    public func requestGeneralPerturbations(
+        where filter: GPPredicate = GPPredicate(),
+        order: GPOrder = GPOrder(),
+        limit: Int? = nil,
+        offset: Int? = nil
+    ) -> EventLoopFuture<GeneralPerturbationsList> {
         return requestData(
             request: GPRequest(),
             handler: DataDelegate(decoder: GPDecoder()),
@@ -228,11 +232,12 @@ public class Client {
     ///            GeneralPerturbationsList.data is array of keplerian elements.
     /// - seeAlso:
     ///     - GeneralPerturbations
-    public func requestGeneralPerturbationsHistory(where filter: GPPredicate = GPPredicate(),
-                                                   order: GPOrder = GPOrder(),
-                                                   limit: Int? = nil,
-                                                   offset: Int? = nil) -> EventLoopFuture<GeneralPerturbationsList>
-    {
+    public func requestGeneralPerturbationsHistory(
+        where filter: GPPredicate = GPPredicate(),
+        order: GPOrder = GPOrder(),
+        limit: Int? = nil,
+        offset: Int? = nil
+    ) -> EventLoopFuture<GeneralPerturbationsList> {
         return requestData(
             request: GPHistoryRequest(),
             handler: DataDelegate(decoder: GPDecoder()),
@@ -257,11 +262,12 @@ public class Client {
     ///            LaunchSiteList.data is array of launch sites.
     /// - seeAlso:
     ///     - LaunchSite
-    public func requestLaunchSiteList(where filter: LaunchSitePredicate = LaunchSitePredicate(),
-                                      order: LaunchSiteOrder = LaunchSiteOrder(),
-                                      limit: Int? = nil,
-                                      offset: Int? = nil) -> EventLoopFuture<LaunchSiteList>
-    {
+    public func requestLaunchSiteList(
+        where filter: LaunchSitePredicate = LaunchSitePredicate(),
+        order: LaunchSiteOrder = LaunchSiteOrder(),
+        limit: Int? = nil,
+        offset: Int? = nil
+    ) -> EventLoopFuture<LaunchSiteList> {
         return requestData(
             request: LaunchSiteRequest(),
             handler: DataDelegate(decoder: LaunchSiteDecoder()),
@@ -286,11 +292,12 @@ public class Client {
     ///            TIPMessageList.data is array of TIP messages.
     /// - seeAlso:
     ///     - TIPMessage
-    public func requestTIPMessageList(where filter: TIPMessagePredicate = TIPMessagePredicate(),
-                                      order: TIPMessageOrder = TIPMessageOrder(),
-                                      limit: Int? = nil,
-                                      offset: Int? = nil) -> EventLoopFuture<TIPMessageList>
-    {
+    public func requestTIPMessageList(
+        where filter: TIPMessagePredicate = TIPMessagePredicate(),
+        order: TIPMessageOrder = TIPMessageOrder(),
+        limit: Int? = nil,
+        offset: Int? = nil
+    ) -> EventLoopFuture<TIPMessageList> {
         return requestData(
             request: TIPMessageRequest(),
             handler: DataDelegate(decoder: TIPMessageDecoder()),
@@ -315,11 +322,12 @@ public class Client {
     ///            DecayList.data is array of decay messages.
     /// - seeAlso:
     ///     - Decay
-    public func requestDecay(where filter: DecayPredicate = DecayPredicate(),
-                             order: DecayOrder = DecayOrder(),
-                             limit: Int? = nil,
-                             offset: Int? = nil) -> EventLoopFuture<DecayList>
-    {
+    public func requestDecay(
+        where filter: DecayPredicate = DecayPredicate(),
+        order: DecayOrder = DecayOrder(),
+        limit: Int? = nil,
+        offset: Int? = nil
+    ) -> EventLoopFuture<DecayList> {
         return requestData(
             request: DecayRequest(),
             handler: DataDelegate(decoder: DecayDecoder()),
@@ -374,11 +382,12 @@ public class Client {
     ///            BoxscoreList.data is array of boxscores.
     /// - seeAlso:
     ///     - Boxscore
-    public func requestBoxscore(where filter: BoxscorePredicate = BoxscorePredicate(),
-                                order: BoxscoreOrder = BoxscoreOrder(),
-                                limit: Int? = nil,
-                                offset: Int? = nil) -> EventLoopFuture<BoxscoreList>
-    {
+    public func requestBoxscore(
+        where filter: BoxscorePredicate = BoxscorePredicate(),
+        order: BoxscoreOrder = BoxscoreOrder(),
+        limit: Int? = nil,
+        offset: Int? = nil
+    ) -> EventLoopFuture<BoxscoreList> {
         return requestData(
             request: BoxscoreRequest(),
             handler: DataDelegate(decoder: BoxscoreDecoder()),
@@ -389,13 +398,14 @@ public class Client {
         )
     }
 
-    private func requestData<Handler: HTTPClientResponseDelegate>(request: RequestInfo,
-                                                                  handler: Handler,
-                                                                  filter: QueryBuilder,
-                                                                  order: QueryBuilder,
-                                                                  limit: Int?,
-                                                                  offset: Int?) -> EventLoopFuture<Handler.Response>
-    {
+    private func requestData<Handler: HTTPClientResponseDelegate>(
+        request: RequestInfo,
+        handler: Handler,
+        filter: QueryBuilder,
+        order: QueryBuilder,
+        limit: Int?,
+        offset: Int?
+    ) -> EventLoopFuture<Handler.Response> {
         let uri = request.uri(filter: filter, order: order, limit: limit, offset: offset)
         let request = createRequest(uri: uri, method: .GET)
         return httpClient.execute(request: request, delegate: handler, deadline: nil).futureResult
@@ -469,12 +479,13 @@ public class Client {
         ///            SatelliteCatalog.data is array of selected satellites.
         /// - seeAlso:
         ///     - SatelliteCatalog
-        func satelliteCatalog(where filter: SatellitePredicate = SatellitePredicate(),
-                              order: SatelliteOrder = SatelliteOrder(),
-                              limit: Int? = nil,
-                              offset: Int? = nil,
-                              timeout: TimeAmount = .seconds(30)) async throws -> SatelliteCatalog
-        {
+        func satelliteCatalog(
+            where filter: SatellitePredicate = SatellitePredicate(),
+            order: SatelliteOrder = SatelliteOrder(),
+            limit: Int? = nil,
+            offset: Int? = nil,
+            timeout: TimeAmount = .seconds(30)
+        ) async throws -> SatelliteCatalog {
             return try await getData(
                 request: SatelliteCatalogRequest(),
                 decoder: SatelliteDecoder(),
@@ -499,12 +510,13 @@ public class Client {
         ///            SatelliteCatalog.data is array of selected satellites.
         /// - seeAlso:
         ///     - SatelliteCatalog
-        func satelliteCatalogDebut(where filter: SatellitePredicate = SatellitePredicate(),
-                                   order: SatelliteOrder = SatelliteOrder(),
-                                   limit: Int? = nil,
-                                   offset: Int? = nil,
-                                   timeout: TimeAmount = .seconds(30)) async throws -> SatelliteCatalog
-        {
+        func satelliteCatalogDebut(
+            where filter: SatellitePredicate = SatellitePredicate(),
+            order: SatelliteOrder = SatelliteOrder(),
+            limit: Int? = nil,
+            offset: Int? = nil,
+            timeout: TimeAmount = .seconds(30)
+        ) async throws -> SatelliteCatalog {
             return try await getData(
                 request: SatelliteCatalogDebutRequest(),
                 decoder: SatelliteDecoder(),
@@ -528,12 +540,13 @@ public class Client {
         ///            SatelliteChangeList.data is array of rows.
         /// - seeAlso:
         ///     - SatelliteChangeList
-        func satelliteChangeList(where filter: SatelliteChangePredicate = SatelliteChangePredicate(),
-                                 order: SatelliteChangeOrder = SatelliteChangeOrder(),
-                                 limit: Int? = nil,
-                                 offset: Int? = nil,
-                                 timeout: TimeAmount = .seconds(30)) async throws -> SatelliteChangeList
-        {
+        func satelliteCatalogChanges(
+            where filter: SatelliteChangePredicate = SatelliteChangePredicate(),
+            order: SatelliteChangeOrder = SatelliteChangeOrder(),
+            limit: Int? = nil,
+            offset: Int? = nil,
+            timeout: TimeAmount = .seconds(30)
+        ) async throws -> SatelliteChangeList {
             return try await getData(
                 request: SatelliteChangeRequest(),
                 decoder: SatelliteChangeDecoder(),
@@ -566,12 +579,13 @@ public class Client {
         ///            GeneralPerturbationsList.data is array of keplerian elements.
         /// - seeAlso:
         ///     - GeneralPerturbations
-        func generalPerturbations(where filter: GPPredicate = GPPredicate(),
-                                  order: GPOrder = GPOrder(),
-                                  limit: Int? = nil,
-                                  offset: Int? = nil,
-                                  timeout: TimeAmount = .seconds(30)) async throws -> GeneralPerturbationsList
-        {
+        func generalPerturbations(
+            where filter: GPPredicate = GPPredicate(),
+            order: GPOrder = GPOrder(),
+            limit: Int? = nil,
+            offset: Int? = nil,
+            timeout: TimeAmount = .seconds(30)
+        ) async throws -> GeneralPerturbationsList {
             return try await getData(
                 request: GPRequest(),
                 decoder: GPDecoder(),
@@ -597,12 +611,13 @@ public class Client {
         ///            GeneralPerturbationsList.data is array of keplerian elements.
         /// - seeAlso:
         ///     - GeneralPerturbations
-        func generalPerturbationsHistory(where filter: GPPredicate = GPPredicate(),
-                                         order: GPOrder = GPOrder(),
-                                         limit: Int? = nil,
-                                         offset: Int? = nil,
-                                         timeout: TimeAmount = .seconds(30)) async throws -> GeneralPerturbationsList
-        {
+        func generalPerturbationsHistory(
+            where filter: GPPredicate = GPPredicate(),
+            order: GPOrder = GPOrder(),
+            limit: Int? = nil,
+            offset: Int? = nil,
+            timeout: TimeAmount = .seconds(30)
+        ) async throws -> GeneralPerturbationsList {
             return try await getData(
                 request: GPHistoryRequest(),
                 decoder: GPDecoder(),
@@ -628,12 +643,13 @@ public class Client {
         ///            LaunchSiteList.data is array of launch sites.
         /// - seeAlso:
         ///     - LaunchSite
-        func launchSiteList(where filter: LaunchSitePredicate = LaunchSitePredicate(),
-                            order: LaunchSiteOrder = LaunchSiteOrder(),
-                            limit: Int? = nil,
-                            offset: Int? = nil,
-                            timeout: TimeAmount = .seconds(30)) async throws -> LaunchSiteList
-        {
+        func launchSiteList(
+            where filter: LaunchSitePredicate = LaunchSitePredicate(),
+            order: LaunchSiteOrder = LaunchSiteOrder(),
+            limit: Int? = nil,
+            offset: Int? = nil,
+            timeout: TimeAmount = .seconds(30)
+        ) async throws -> LaunchSiteList {
             return try await getData(
                 request: LaunchSiteRequest(),
                 decoder: LaunchSiteDecoder(),
@@ -659,12 +675,13 @@ public class Client {
         ///            TIPMessageList.data is array of TIP messages.
         /// - seeAlso:
         ///     - TIPMessage
-        func TIPMessageList(where filter: TIPMessagePredicate = TIPMessagePredicate(),
-                            order: TIPMessageOrder = TIPMessageOrder(),
-                            limit: Int? = nil,
-                            offset: Int? = nil,
-                            timeout: TimeAmount = .seconds(30)) async throws -> TIPMessageList
-        {
+        func TIPMessageList(
+            where filter: TIPMessagePredicate = TIPMessagePredicate(),
+            order: TIPMessageOrder = TIPMessageOrder(),
+            limit: Int? = nil,
+            offset: Int? = nil,
+            timeout: TimeAmount = .seconds(30)
+        ) async throws -> TIPMessageList {
             return try await getData(
                 request: TIPMessageRequest(),
                 decoder: TIPMessageDecoder(),
@@ -690,12 +707,13 @@ public class Client {
         ///            DecayList.data is array of decay messages.
         /// - seeAlso:
         ///     - Decay
-        func decay(where filter: DecayPredicate = DecayPredicate(),
-                   order: DecayOrder = DecayOrder(),
-                   limit: Int? = nil,
-                   offset: Int? = nil,
-                   timeout: TimeAmount = .seconds(30)) async throws -> DecayList
-        {
+        func decay(
+            where filter: DecayPredicate = DecayPredicate(),
+            order: DecayOrder = DecayOrder(),
+            limit: Int? = nil,
+            offset: Int? = nil,
+            timeout: TimeAmount = .seconds(30)
+        ) async throws -> DecayList {
             return try await getData(
                 request: DecayRequest(),
                 decoder: DecayDecoder(),
@@ -753,12 +771,13 @@ public class Client {
         ///            BoxscoreList.data is array of boxscores.
         /// - seeAlso:
         ///     - Boxscore
-        func boxscore(where filter: BoxscorePredicate = BoxscorePredicate(),
-                      order: BoxscoreOrder = BoxscoreOrder(),
-                      limit: Int? = nil,
-                      offset: Int? = nil,
-                      timeout: TimeAmount = .seconds(30)) async throws -> BoxscoreList
-        {
+        func boxscore(
+            where filter: BoxscorePredicate = BoxscorePredicate(),
+            order: BoxscoreOrder = BoxscoreOrder(),
+            limit: Int? = nil,
+            offset: Int? = nil,
+            timeout: TimeAmount = .seconds(30)
+        ) async throws -> BoxscoreList {
             return try await getData(
                 request: BoxscoreRequest(),
                 decoder: BoxscoreDecoder(),
@@ -770,14 +789,15 @@ public class Client {
             )
         }
 
-        private func getData<Decoder: ResponseDecoder>(request: RequestInfo,
-                                                       decoder: Decoder,
-                                                       filter: QueryBuilder,
-                                                       order: QueryBuilder,
-                                                       limit: Int?,
-                                                       offset: Int?,
-                                                       timeout: TimeAmount) async throws -> Decoder.Output
-        {
+        private func getData<Decoder: ResponseDecoder>(
+            request: RequestInfo,
+            decoder: Decoder,
+            filter: QueryBuilder,
+            order: QueryBuilder,
+            limit: Int?,
+            offset: Int?,
+            timeout: TimeAmount
+        ) async throws -> Decoder.Output {
             let uri = request.uri(filter: filter, order: order, limit: limit, offset: offset)
             var request = HTTPClientRequest(url: url(uri: uri))
             session.headers.forEach {
