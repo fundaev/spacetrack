@@ -13,7 +13,7 @@ API.
 - [SpaceTrack entities](#spacetrack-entities)
     - [Filtering](#filtering)
     - [Sorting](#sorting)
-- [Supported entities](#supported-entities)
+- [Supported requests](#supported-requests)
     - [Satellite catalog](#satellite-catalog)
     - [Satellite catalog debut](#satellite-catalog-debut)
     - [Satellite catalog changes](#satellite-catalog-changes)
