@@ -19,7 +19,6 @@
 // SOFTWARE.
 
 import Foundation
-import Network
 
 private extension String {
     func toValidUri() -> String {
