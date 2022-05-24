@@ -20,6 +20,7 @@ API.
     - [Satellite catalog changes](#satellite-catalog-changes)
     - [General perturbations](#general-perturbations)
     - [General perturbations history](#general-perturbations-history)
+    - [Launch sites](#launch-sites)
 
 ## Installation
 
@@ -32,7 +33,12 @@ To add SpaceTrack package into your project one should insert this line into `de
 One should also add something like that:
 
 ```swift
-.target(name: "MyProject", dependencies: [.product(name: "SpaceTrack", package: "spacetrack")]),
+.target(
+    name: "MyProject",
+    dependencies: [
+        .product(name: "SpaceTrack", package: "spacetrack")
+    ]
+),
 ``` 
 
 in your target specification.
@@ -75,7 +81,10 @@ Alternatively one can ask client to create event loop group itself:
 To receive a data you should authorize the client instance.
 
 ```swift
-let authResult = try await client.auth(username: "your.username@test.info", password: "123456")
+let authResult = try await client.auth(
+    username: "your.username@test.info",
+    password: "your.password"
+)
 if (authResult != Result.Success) {
     // handle failed authentication
 }
@@ -92,7 +101,10 @@ if (authResult != Result.Success) {
 There is alternative method for authentication, which doesn't use Swift Concurrency:
 
 ```swift
-let authFuture = client.authorize(username: "your.username@test.info", password: "123456")
+let authFuture = client.authorize(
+    username: "your.username@test.info",
+    password: "your.password"
+)
 let result = try authFuture.wait()
 if (result != Result.Success) {
     // handle failed authentication
@@ -379,6 +391,51 @@ for gp in response.data {
     print(gp.tleLine2 ?? "-")
 }
 print("-------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+</p>
+</details>
+
+### Launch sites
+
+List of launch sites found in satellite catalog records can be received with `launchSiteList` method.
+
+```swift
+let response = try await client.launchSiteList(
+    where: LaunchSite.Key.launchSite == "~~Center~~",
+    order: LaunchSite.Key.siteCode.asc,
+    limit: 10
+)
+for site in response.data {
+    print("\(site.siteCode) \(site.launchSite)")
+}
+print("-------------------------------------------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+<details>
+<summary>
+<p>
+
+#### With EventLoopFuture
+
+</p>
+</summary>
+<p>
+Use `requestLaunchSiteList` method if you don't want to deal with Swift Concurrency.
+
+```swift
+let future = client.requestLaunchSiteList(
+    where: LaunchSite.Key.launchSite == "~~Center~~",
+    order: LaunchSite.Key.siteCode.asc,
+    limit: 10
+)
+let response = future.wait()
+for site in response.data {
+    print("\(site.siteCode) \(site.launchSite)")
+}
+print("-------------------------------------------------------------------")
 print("\(response.data.count) item(s) from \(response.count)")
 ```
 
