@@ -7,17 +7,17 @@
 The SpaceTrack package allows to interact with [www.space-track.org](https://www.space-track.org)
 API.
 
-1. [Installation](#1-installation)
-2. [Client](#2-client)
-3. [Authentication](#3-authentication)
-4. [SpaceTrack entities](#4-spacetrack-entities)
-    - [Filters](#41-filters)
-    - [Sorting](#42-sorting)
-5. [Supported entities](#5-supported-entities)
-    - [Satellite catalog](#51-satellite-catalog)
-    - [General perturbations](#52-general-perturbations)
+- [Installation](#installation)
+- [Client](#client)
+- [Authentication](#authentication)
+- [SpaceTrack entities](#spacetrack-entities)
+    - [Filtering](#filtering)
+    - [Sorting](#sorting)
+- [Supported entities](#supported-entities)
+    - [Satellite catalog](#satellite-catalog)
+    - [General perturbations](#general-perturbations)
 
-## 1 Installation
+## Installation
 
 To add SpaceTrack package into your project one should insert this line into `dependencies` array in your Package.swift file:
 
@@ -33,7 +33,7 @@ One should also add something like that:
 
 in your target specification.
 
-## 2 Client
+## Client
 
 The `Client` class is "entry point" of this package. It's responsible for:
 1. Authentication;
@@ -64,7 +64,7 @@ let client = Client(eventLoopGroupProvider: .shared(eventLoopGroup))
 
 Alternatively one can ask client to create event loop group itself:
 
-## 3 Authentication
+## Authentication
 
 [www.space-track.org](https://www.space-track.org) provides a data to registered users only. It means that you should create an account there if you don't have it yet.  
 
@@ -80,7 +80,7 @@ if (authResult != Result.Success) {
 <summary>
 <p>
 
-#### ► With EventLoopFuture
+#### With EventLoopFuture
 
 </p>
 </summary>
@@ -98,7 +98,7 @@ if (result != Result.Success) {
 </p>
 </details>
 
-## 4 SpaceTrack entities
+## SpaceTrack entities
 
 [www.space-track.org](https://www.space-track.org) provides several kinds of data: satellite catalog, general perturbations, predicted and historical decay information etc. Each of them can be requested by a specifiec request. The corresponding responses contains a list of some entities.
 
@@ -106,7 +106,7 @@ For example, the response for satellite catalog request contains a list of satel
 
 SpaceTrack package provides speciel public structures for each of these entities. Let's name them entities structures. The received entities list is wrapped by another structure, containing the list itself and the total number of such entities, satisfying the provided filter. 
 
-### 4.1 Filters
+### Filtering
 
 To support filters each entity structure provides `Key` enumiration. Its members represent the properties of coresponding entities. This enumiration supports the following operators: `==`, `!=`,  `<`, `>`. One should use them to construct some filter. For example:
 ```swift
@@ -123,7 +123,7 @@ One may construct filter with several conditions using `&&` operator:
 let filter = Satellite.Key.name == "NOAA" && Satellite.Key.inclination > 98;
 ```
 
-### 4.2 Sorting
+### Sorting
 
 `Key` enumirations can be used to sort the requested entities list. For that `Key` provides `asc` and `desc` read-only properties:
 ```swift
@@ -136,9 +136,9 @@ You may sort the result by several fields using `&` operator:
 let order = Satellite.Key.name.asc & Satellite.Key.launchYear.desc
 ```
 
-## 5 Supported entities
+## Supported entities
 
-### 5.1 Satellite catalog
+### Satellite catalog
 
 To get the available list of the satellites one should use `satelliteCatalog` method.
 
@@ -163,7 +163,7 @@ print("\(response.data.count) item(s) from \(response.count)")
 <summary>
 <p>
 
-#### ► With EventLoopFuture
+#### With EventLoopFuture
 
 </p>
 </summary>
@@ -188,7 +188,7 @@ print("\(result.data.count) item(s) from \(result.count)")
 </p>
 </details>
 
-### 5.2 General perturbations
+### General perturbations
 
 To get the keplerian elements of the satellite one should use `generalPerturbations` method:
 
@@ -210,7 +210,7 @@ print("\(response.data.count) item(s) from \(response.count)")
 <summary>
 <p>
 
-#### ► With EventLoopFuture
+#### With EventLoopFuture
 
 </p>
 </summary>
