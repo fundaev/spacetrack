@@ -240,14 +240,16 @@ print("\(response.data.count) item(s) from \(response.count)")
 To get the list of the satellites, changed in the catalog during about the last 60 days, use `satelliteCatalogChanges` method:
 ```swift
 let satcatChanges = try await client.satelliteCatalogChanges(
-    where: SatelliteChange.Key.previousDecay == nil && SatelliteChange.Key.currentDecay != nil,
+    where: SatelliteChange.Key.previousDecay == nil &&
+           SatelliteChange.Key.currentDecay != nil,
     order: SatelliteChange.Key.changeMade.desc,
     limit: 10
 )
 let dateFormatter = DateFormatter()
 dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:SS"
 for change in satcatChanges.data {
-    print("\(change.currentName): decay: NULL -> \(dateFormatter.string(from: change.currentDecay!))")
+    let decay = dateFormatter.string(from: change.currentDecay!)
+    print("\(change.currentName): decay: NULL -> \(decay)")
 }
 print("-------------------------------------------------------------------")
 print("\(satcatChanges.data.count) item(s) from \(satcatChanges.count)")
@@ -266,7 +268,8 @@ Use `requestSatelliteCatalogChanges` method if you don't want to deal with Swift
 
 ```swift
 let future = client.requestSatelliteCatalogChanges(
-    where: SatelliteChange.Key.previousDecay == nil && SatelliteChange.Key.currentDecay != nil,
+    where: SatelliteChange.Key.previousDecay == nil &&
+           SatelliteChange.Key.currentDecay != nil,
     order: SatelliteChange.Key.changeMade.desc,
     limit: 10
 )
@@ -274,7 +277,8 @@ let response = try future.wait()
 let dateFormatter = DateFormatter()
 dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:SS"
 for change in satcatChanges.data {
-    print("\(change.currentName): decay: NULL -> \(dateFormatter.string(from: change.currentDecay!))")
+    let decay = dateFormatter.string(from: change.currentDecay!)
+    print("\(change.currentName): decay: NULL -> \(decay)")
 }
 print("-------------------------------------------------------------------")
 print("\(satcatChanges.data.count) item(s) from \(satcatChanges.count)")
