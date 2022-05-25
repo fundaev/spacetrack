@@ -1,5 +1,5 @@
 ![Swift](https://img.shields.io/badge/Swift-%3E%3D%205.4-orange)
-![Platform](https://img.shields.io/badge/Platform-MacOS%20%20Linux%20%20iOS%20%20watchOS%20%20tvOS-blue)
+![Platform](https://img.shields.io/badge/Platform-macOS%20%20Linux%20%20iOS%20%20watchOS%20%20tvOS-blue)
 
 [![Swift](https://github.com/fundaev/spacetrack/actions/workflows/swift.yml/badge.svg)](https://github.com/fundaev/spacetrack/actions/workflows/swift.yml)
 
