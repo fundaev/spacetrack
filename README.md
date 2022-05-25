@@ -21,6 +21,8 @@ API.
     - [General perturbations](#general-perturbations)
     - [General perturbations history](#general-perturbations-history)
     - [Launch sites](#launch-sites)
+    - [TIP messages](#tip-messages)
+    - [Decay](#decay)
 
 ## Installation
 
@@ -434,6 +436,100 @@ let future = client.requestLaunchSiteList(
 let response = future.wait()
 for site in response.data {
     print("\(site.siteCode) \(site.launchSite)")
+}
+print("-------------------------------------------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+</p>
+</details>
+
+### TIP messages
+
+To get Tracking and Impact Prediction (TIP) Messages use `TIPMessageList` method:
+
+```swift
+let response = try await client.TIPMessageList(
+    where: TIPMessage.Key.noradCatId > 10000,
+    order: TIPMessage.Key.objectNumber.asc,
+    limit: 10,
+    offset: 3
+)
+for tip in response.data {
+    print("\(tip.objectNumber ?? 0) \(tip.noradCatId ?? 0)")
+}
+print("-------------------------------------------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+<details>
+<summary>
+<p>
+
+#### With EventLoopFuture
+
+</p>
+</summary>
+<p>
+Use `requestTIPMessageList` method if you don't want to deal with Swift Concurrency.
+
+```swift
+let future = client.requestTIPMessageList(
+    where: TIPMessage.Key.noradCatId > 10000,
+    order: TIPMessage.Key.objectNumber.asc,
+    limit: 10,
+    offset: 3
+)
+let response = future.wait()
+for tip in response.data {
+    print("\(tip.objectNumber ?? 0) \(tip.noradCatId ?? 0)")
+}
+print("-------------------------------------------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+</p>
+</details>
+
+### Decay
+
+To request predicted and historical decay information use `decay` method:
+
+```swift
+let response = try await client.decay(
+    where: Decay.Key.objectName == "~~NOAA~~",
+    order: Decay.Key.objectId.asc,
+    limit: 10,
+    offset: 100
+)
+for decay in response.data {
+    print("\(decay.objectId) \(tip.objectName)")
+}
+print("-------------------------------------------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+<details>
+<summary>
+<p>
+
+#### With EventLoopFuture
+
+</p>
+</summary>
+<p>
+Use `requestDecay` method if you don't want to deal with Swift Concurrency.
+
+```swift
+let future = client.requestDecay(
+    where: Decay.Key.objectName == "~~NOAA~~",
+    order: Decay.Key.objectId.asc,
+    limit: 10,
+    offset: 100
+)
+let response = future.wait()
+for decay in response.data {
+    print("\(decay.objectId) \(tip.objectName)")
 }
 print("-------------------------------------------------------------------")
 print("\(response.data.count) item(s) from \(response.count)")
