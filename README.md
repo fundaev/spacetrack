@@ -23,6 +23,8 @@ API.
     - [Launch sites](#launch-sites)
     - [TIP messages](#tip-messages)
     - [Decay](#decay)
+    - [Conjunction data message](#conjunction-data-message)
+    - [Boxscore](#boxscore)
 
 ## Installation
 
@@ -530,6 +532,100 @@ let future = client.requestDecay(
 let response = future.wait()
 for decay in response.data {
     print("\(decay.objectId) \(tip.objectName)")
+}
+print("-------------------------------------------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+</p>
+</details>
+
+### Conjunction data message
+
+To request conjunction data messages list use `conjunctionDataMessageList` method:
+
+```swift
+let response = try await client.conjunctionDataMessageList(
+    where: ConjunctionDataMessage.Key.sat1Name == "~~NOAA~~",
+    order: ConjunctionDataMessage.Key.sat1Name.asc,
+    limit: 10,
+    offset: 3
+)
+for cdm in response.data {
+    print("\(cdm.sat1Id ?? 0) \(cdm.sat1Name ?? "-") \(cdm.sat2Id ?? 0) \(cdm.sat2Name ?? "-")")
+}
+print("-------------------------------------------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+<details>
+<summary>
+<p>
+
+#### With EventLoopFuture
+
+</p>
+</summary>
+<p>
+Use `requestConjunctionDataMessageList` method if you don't want to deal with Swift Concurrency.
+
+```swift
+let future = client.requestConjunctionDataMessageList(
+    where: ConjunctionDataMessage.Key.sat1Name == "~~NOAA~~",
+    order: ConjunctionDataMessage.Key.sat1Name.asc,
+    limit: 10,
+    offset: 3
+)
+let response = future.wait()
+for cdm in response.data {
+    print("\(cdm.sat1Id ?? 0) \(cdm.sat1Name ?? "-") \(cdm.sat2Id ?? 0) \(cdm.sat2Name ?? "-")")
+}
+print("-------------------------------------------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+</p>
+</details>
+
+### Boxscore
+
+To request accounting of man-made objects that have been or are in orbit use `boxscore` method:
+
+```swift
+let response = try await client.boxscore(
+    where: Boxscore.Key.orbitalPayloadCount > 0,
+    order: Boxscore.Key.orbitalPayloadCount.desc,
+    limit: 10,
+    offset: 3
+)
+for boxscore in response.data {
+    print("\(boxscore.country) \(boxscore.orbitalPayloadCount ?? 0)")
+}
+print("-------------------------------------------------------------------")
+print("\(response.data.count) item(s) from \(response.count)")
+```
+
+<details>
+<summary>
+<p>
+
+#### With EventLoopFuture
+
+</p>
+</summary>
+<p>
+Use `requestBoxscore` method if you don't want to deal with Swift Concurrency.
+
+```swift
+let future = client.requestBoxscore(
+    where: Boxscore.Key.orbitalPayloadCount > 0,
+    order: Boxscore.Key.orbitalPayloadCount.desc,
+    limit: 10,
+    offset: 3
+)
+let response = future.wait()
+for boxscore in response.data {
+    print("\(boxscore.country) \(boxscore.orbitalPayloadCount ?? 0)")
 }
 print("-------------------------------------------------------------------")
 print("\(response.data.count) item(s) from \(response.count)")
