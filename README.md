@@ -31,7 +31,7 @@ API.
 To add SpaceTrack package into your project one should insert this line into `dependencies` array in your Package.swift file:
 
 ```swift
-.package(url: "https://github.com/fundaev/spacetrack.git", from: "1.1.0"),
+.package(url: "https://github.com/fundaev/spacetrack.git", from: "1.2.0"),
 ``` 
 
 One should also add something like that:
